@@ -1,0 +1,18 @@
+runtime: php74
+
+env_variables:
+  DEPLOY_URL: "https://crafty-coral-281804.uc.r.appspot.com"
+
+handlers:
+  - url: /(.*\.(gif|png|jpg|css|js))$
+    static_files: public/\1
+    upload: public/.*\.(gif|png|jpg|css|js)$
+
+  - url: public/favicon.ico
+    static_files: public/favicon.ico
+    upload: public/favicon.ico
+
+  - url: /.*
+    secure: always
+    redirect_http_response_code: 301
+    script: auto

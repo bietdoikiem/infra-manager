@@ -1,0 +1,375 @@
+{% extends "base.html" %} {% block title %}Projects {% endblock %} {% block
+header_title %} Projects {% endblock %} {% block breadcrumb %} Projects {%
+endblock %} {% block body %}
+
+<div id="inner-project-content">
+	<!-- Table -->
+	<h2>List of Projects</h2>
+	<!-- Button trigger modal -->
+	<div class="table-actions mb-2" style="display: flex">
+		<button
+			type="button"
+			class="btn btn-primary"
+			data-toggle="modal"
+			data-target="#addModal"
+			style="margin-left: auto"
+		>
+			<i class="fas fa-plus"></i>
+			Add
+		</button>
+	</div>
+	<div style="overflow-x: auto">
+		<table class="table">
+			<thead class="thead-light">
+				<tr>
+					<th scope="col">ID</th>
+					<th scope="col">Project Name</th>
+					<th scope="col">Subtype</th>
+					<th scope="col">Current Status</th>
+					<th scope="col">Capacity (MW)</th>
+					<th scope="col">Year of Completion</th>
+					<th scope="col">Country list of Sponsor/Developer</th>
+					<th scope="col">Sponsor/Developer company</th>
+					<th scope="col">Country list of Lender/Financier</th>
+					<th scope="col">Lender/Financier company</th>
+					<th scope="col">Country list of Construction/EPC</th>
+					<th scope="col">Construction Company/EPC Participant</th>
+					<th scope="col">Country</th>
+					<th scope="col">Province/State</th>
+					<th scope="col">District</th>
+					<th scope="col">Tributary</th>
+					<th scope="col">Latitude</th>
+					<th scope="col">Longitude</th>
+					<th scope="col">Proximity</th>
+					<th scope="col">Avg. Annual Output (MWh)</th>
+					<th scope="col">Data Source</th>
+					<th scope="col">Announce more information</th>
+					<th scope="col">Link</th>
+					<th scope="col">Latest update</th>
+					<th scope="col"></th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for project in project_list %}
+				<tr>
+					<th scope="row">{{ emp.id }}</th>
+					<td>{{ emp.project_name }}</td>
+					<td>{{ emp.subtype }}</td>
+					<td>{{ emp.current_status }}</td>
+					<td>{{ emp.capacity_mwh }}</td>
+					<td>{{ emp.year_of_completion }}</td>
+					<td>{{ emp.country_list_of_sponsor_developer }}</td>
+					<td>{{ emp.sponsor_developer_company }}</td>
+					<td>{{ emp.country_list_of_lender_financier }}</td>
+					<td>{{ emp.lender_financier_company }}</td>
+					<td>{{ emp.country_list_of_construction_epc }}</td>
+					<td>{{ emp.construction_company_epc_participant }}</td>
+					<td>{{ emp.country }}</td>
+					<td>{{ emp.province_state }}</td>
+					<td>{{ emp.district }}</td>
+					<td>{{ emp.tributary }}</td>
+					<td>{{ emp.latitude }}</td>
+					<td>{{ emp.longitude }}</td>
+					<td>{{ emp.proximity }}</td>
+					<td>{{ emp.avg_annual_output_mwh }}</td>
+					<td>{{ emp.data_source }}</td>
+					<td>{{ emp.announce_more_information }}</td>
+					<td>{{ emp.link }}</td>
+					<td>{{ emp.latest_update }}</td>
+					<td>
+						<a
+							href="#"
+							role="button"
+							aria-pressed="true"
+							class="btn btn-danger ml-2 float-right"
+							style="font-size: 10px"
+						>
+							<i class="fas fa-trash-alt"></i>
+						</a>
+						<button
+							type="button"
+							class="btn btn-primary float-right"
+							style="font-size: 10px"
+							data-toggle="modal"
+							data-target="#editModal"
+							data-id="{{ emp.id }}"
+							data-firstname="{{ emp.first_name }}"
+							data-lastname="{{ emp.last_name }}"
+							data-gender="{{ emp.gender }}"
+							data-age="{{ emp.age }}"
+							data-address="{{ emp.address }}"
+							data-phonenumber="{{ emp.phone_number }}"
+						>
+							<i class="fas fa-edit" style></i>
+						</button>
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+
+	<!-- Add Modal -->
+	<div
+		class="modal fade"
+		id="addModal"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="addModalLabel"
+		aria-hidden="false"
+	>
+		<div class="modal-dialog modal-lg" role="document">
+			<form id="add-project-form" action="/projects/add" method="post">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Add a project</h5>
+						<button
+							type="button"
+							class="close"
+							data-dismiss="modal"
+							aria-label="Close"
+						>
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label for="input-first_name">First Name</label>
+								<input
+									type="text"
+									class="form-control"
+									id="input-first_name"
+									placeholder="First name"
+									name="first_name"
+									required
+								/>
+							</div>
+							<div class="form-group col-md-6">
+								<label for="input-last_name">Last Name</label>
+								<input
+									type="text"
+									class="form-control"
+									id="input-last_name"
+									placeholder="Last name"
+									name="last_name"
+									required
+								/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="input-address">Address</label>
+							<input
+								type="text"
+								class="form-control"
+								id="input-address"
+								placeholder="City, street, or building"
+								name="address"
+								required
+							/>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-4">
+								<label for="input-gender">Gender</label>
+								<select
+									id="input-gender"
+									class="form-control"
+									name="gender"
+									required
+								>
+									<option selected>Choose...</option>
+									<option>M</option>
+									<option>F</option>
+								</select>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="input-age">Age</label>
+								<input
+									type="number"
+									class="form-control"
+									id="input-age"
+									name="age"
+									min="0"
+									max="200"
+									required
+								/>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="input-phone-number">Phone No.</label>
+								<input
+									type="tel"
+									class="form-control"
+									pattern="[0-9]{10}|[0-9]{11}"
+									id="input-phone-number"
+									name="phone_number"
+									required
+								/>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- Edit modal -->
+	<div
+		class="modal fade"
+		id="editModal"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="editModalLabel"
+		aria-hidden="true"
+	>
+		<div class="modal-dialog modal-lg" role="document">
+			<form id="edit-project-form" action="#" method="post">
+				<div class="modal-content">
+					<div class="modal-header">
+						<!-- Modal Title -->
+						<h5 class="modal-title" id="editModalLabel"></h5>
+						<button
+							type="button"
+							class="close"
+							data-dismiss="modal"
+							aria-label="Close"
+						>
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- Modal Body -->
+					<div class="modal-body">
+						<input
+							type="hidden"
+							class="form-control"
+							id="edit-input-id"
+							name="id"
+							required
+						/>
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label for="input-first_name">First Name</label>
+								<input
+									type="text"
+									class="form-control"
+									id="edit-input-first_name"
+									placeholder="First name"
+									name="first_name"
+									required
+								/>
+							</div>
+							<div class="form-group col-md-6">
+								<label for="input-last_name">Last Name</label>
+								<input
+									type="text"
+									class="form-control"
+									id="edit-input-last_name"
+									placeholder="Last name"
+									name="last_name"
+									required
+								/>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="input-address">Address</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-address"
+								placeholder="City, street, or building"
+								name="address"
+								required
+							/>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-4">
+								<label for="input-gender">Gender</label>
+								<select
+									id="edit-input-gender"
+									class="form-control"
+									name="gender"
+									required
+								>
+									<option selected>Choose...</option>
+									<option>M</option>
+									<option>F</option>
+								</select>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="input-age">Age</label>
+								<input
+									type="number"
+									class="form-control"
+									id="edit-input-age"
+									name="age"
+									min="0"
+									max="200"
+									required
+								/>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="input-phone-number">Phone No.</label>
+								<input
+									type="tel"
+									class="form-control"
+									pattern="[0-9]{10}|[0-9]{11}"
+									id="edit-input-phone_number"
+									name="phone_number"
+									required
+								/>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button
+							type="button"
+							class="btn btn-secondary"
+							data-dismiss="modal"
+						>
+							Close
+						</button>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function (e) {
+		$("#editModal").on("show.bs.modal", function (event) {
+			// Parse data from data aria attributes
+			let button = $(event.relatedTarget);
+			let id = parseInt(button.data("id"));
+			let first_name = button.data("firstname");
+			let last_name = button.data("lastname");
+			let gender = button.data("gender");
+			let age = parseInt(button.data("age"), 10);
+			let address = button.data("address");
+			let phone_number = button.data("phonenumber");
+			$("#edit-project-form").attr("action", `/projects/edit`);
+			// Edit Modal
+			var modal = $(this);
+			modal.find(".modal-title").text(`Edit Project ID ${id}`);
+			$("#edit-input-id").val(id);
+			$("#edit-input-first_name").val(first_name);
+			$("#edit-input-last_name").val(last_name);
+			$("#edit-input-gender").val(gender);
+			$("#edit-input-age").val(age);
+			$("#edit-input-address").val(address);
+			$("#edit-input-phone_number").val(phone_number);
+		});
+	});
+</script>
+{% endblock %}
