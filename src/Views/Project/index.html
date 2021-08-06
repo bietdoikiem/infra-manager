@@ -135,39 +135,79 @@ endblock %} {% block body %}
 					<div class="modal-body">
 						<div class="form-row">
 							<div class="form-group col-md-6">
-								<label for="input-first_name">First Name</label>
+								<label for="input-project_name">Project Name</label>
 								<input
 									type="text"
 									class="form-control"
-									id="input-first_name"
-									placeholder="First name"
-									name="first_name"
+									id="input-project_name"
+									placeholder="Project name"
+									name="project_name"
 									required
 								/>
 							</div>
 							<div class="form-group col-md-6">
-								<label for="input-last_name">Last Name</label>
+								<label for="input-subtype">Subtype</label>
+								<select
+									id="input-subtype"
+									class="form-control"
+									name="subtype"
+									required
+								>
+									<option selected>Choose...</option>
+									<option>Hydro</option>
+									<option>Solar</option>
+									<option>Coal</option>
+									<option>Gas</option>
+									<option>Wind</option>
+									<option>Waste</option>
+									<option>Biomass</option>
+									<option>Oil</option>
+									<option>Geothermal</option>
+									<option>Nuclear</option>
+									<option>Mixed Fossil Fuel</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="form-group col-md-6">
+								<label for="input-current_status">Current Status</label>
+								<select
+									id="input-current_status"
+									class="form-control"
+									name="subtype"
+									required
+								>
+									<option selected>Choose...</option>
+									<option>Operational</option>
+									<option>Planned</option>
+									<option>Under Construction</option>
+									<option>Cancelled</option>
+									<option>Postponed</option>
+									<option>Unknown</option>
+								</select>
+							</div>
+							<div class="form-group col-md-4">
+								<label for="input-address">Address</label>
 								<input
 									type="text"
 									class="form-control"
-									id="input-last_name"
-									placeholder="Last name"
-									name="last_name"
+									id="input-address"
+									placeholder="City, street, or building"
+									name="address"
 									required
 								/>
 							</div>
-						</div>
-
-						<div class="form-group">
-							<label for="input-address">Address</label>
-							<input
-								type="text"
-								class="form-control"
-								id="input-address"
-								placeholder="City, street, or building"
-								name="address"
-								required
-							/>
+							<div class="form-group col-md-4">
+								<label for="input-address">Address</label>
+								<input
+									type="text"
+									class="form-control"
+									id="input-address"
+									placeholder="City, street, or building"
+									name="address"
+									required
+								/>
+							</div>
 						</div>
 						<div class="form-row">
 							<div class="form-group col-md-4">
@@ -214,7 +254,7 @@ endblock %} {% block body %}
 							class="btn btn-secondary"
 							data-dismiss="modal"
 						>
-							Close
+							Cancel
 						</button>
 						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
@@ -336,7 +376,7 @@ endblock %} {% block body %}
 							class="btn btn-secondary"
 							data-dismiss="modal"
 						>
-							Close
+							Cancel
 						</button>
 						<button type="submit" class="btn btn-primary">Submit</button>
 					</div>
