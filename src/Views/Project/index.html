@@ -22,7 +22,7 @@ endblock %} {% block body %}
 		<table class="table">
 			<thead class="thead-light">
 				<tr>
-					<th scope="col">ID</th>
+					<th class="sticky-col first-col-header" scope="col">ID</th>
 					<th scope="col">Project Name</th>
 					<th scope="col">Subtype</th>
 					<th scope="col">Current Status</th>
@@ -46,36 +46,36 @@ endblock %} {% block body %}
 					<th scope="col">Announce more information</th>
 					<th scope="col">Link</th>
 					<th scope="col">Latest update</th>
-					<th scope="col"></th>
+					<th scope="col" style="color: transparent">Edit/Delete</th>
 				</tr>
 			</thead>
 			<tbody>
 				{% for project in project_list %}
 				<tr>
-					<th scope="row">{{ emp.id }}</th>
-					<td>{{ emp.project_name }}</td>
-					<td>{{ emp.subtype }}</td>
-					<td>{{ emp.current_status }}</td>
-					<td>{{ emp.capacity_mwh }}</td>
-					<td>{{ emp.year_of_completion }}</td>
-					<td>{{ emp.country_list_of_sponsor_developer }}</td>
-					<td>{{ emp.sponsor_developer_company }}</td>
-					<td>{{ emp.country_list_of_lender_financier }}</td>
-					<td>{{ emp.lender_financier_company }}</td>
-					<td>{{ emp.country_list_of_construction_epc }}</td>
-					<td>{{ emp.construction_company_epc_participant }}</td>
-					<td>{{ emp.country }}</td>
-					<td>{{ emp.province_state }}</td>
-					<td>{{ emp.district }}</td>
-					<td>{{ emp.tributary }}</td>
-					<td>{{ emp.latitude }}</td>
-					<td>{{ emp.longitude }}</td>
-					<td>{{ emp.proximity }}</td>
-					<td>{{ emp.avg_annual_output_mwh }}</td>
-					<td>{{ emp.data_source }}</td>
-					<td>{{ emp.announce_more_information }}</td>
-					<td>{{ emp.link }}</td>
-					<td>{{ emp.latest_update }}</td>
+					<th class="sticky-col first-col" scope="row">{{ project.id }}</th>
+					<td>{{ project.project_name }}</td>
+					<td>{{ project.subtype }}</td>
+					<td>{{ project.current_status }}</td>
+					<td>{{ project.capacity_mwh ?? "N/A" }}</td>
+					<td>{{ project.year_of_completion ?? "N/A" }}</td>
+					<td>{{ project.country_list_of_sponsor_developer ?? "N/A" }}</td>
+					<td>{{ project.sponsor_developer_company ?? "N/A" }}</td>
+					<td>{{ project.country_list_of_lender_financier ?? "N/A" }}</td>
+					<td>{{ project.lender_financier_company ?? "N/A" }}</td>
+					<td>{{ project.country_list_of_construction_epc ?? "N/A"}}</td>
+					<td>{{ project.construction_company_epc_participant ?? "N/A" }}</td>
+					<td>{{ project.country }}</td>
+					<td>{{ project.province_state }}</td>
+					<td>{{ project.district }}</td>
+					<td>{{ project.tributary ?? "N/A" }}</td>
+					<td>{{ project.latitude }}</td>
+					<td>{{ project.longitude }}</td>
+					<td>{{ project.proximity ?? "N/A" }}</td>
+					<td>{{ project.avg_annual_output_mwh ?? "N/A" }}</td>
+					<td>{{ project.data_source }}</td>
+					<td>{{ project.announce_more_information ?? "N/A" }}</td>
+					<td>{{ project.link ?? "N/A" }}</td>
+					<td>{{ project.latest_update ?? "N/A" }}</td>
 					<td>
 						<a
 							href="#"
@@ -92,13 +92,13 @@ endblock %} {% block body %}
 							style="font-size: 10px"
 							data-toggle="modal"
 							data-target="#editModal"
-							data-id="{{ emp.id }}"
-							data-firstname="{{ emp.first_name }}"
-							data-lastname="{{ emp.last_name }}"
-							data-gender="{{ emp.gender }}"
-							data-age="{{ emp.age }}"
-							data-address="{{ emp.address }}"
-							data-phonenumber="{{ emp.phone_number }}"
+							data-id="{{ project.id }}"
+							data-projectname="{{ project.project_name }}"
+							data-subtype="{{ project.subtype }}"
+							data-currentstatus="{{ project.current_status }}"
+							data-capacitymwh="{{ project.capacity_mwh }}"
+							data-yearofcompletion="{{ project.year_of_completion }}"
+							data-countrylistofsponsordeveloper="{{ project.phone_number }}"
 						>
 							<i class="fas fa-edit" style></i>
 						</button>

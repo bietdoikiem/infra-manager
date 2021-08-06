@@ -9,26 +9,26 @@ class Project {
   public string $project_name;
   public string $subtype;
   public string $current_status;
-  public float $capacity_mw;
-  public int $year_of_completion;
-  public string $country_list_of_sponsor_developer;
-  public string $sponsor_developer_company;
-  public string $country_list_of_lender_financier;
-  public string $lender_financier_company;
-  public string $country_list_of_construction_epc;
-  public string $construction_company_epc_participant;
+  public ?float $capacity_mw;
+  public ?int $year_of_completion;
+  public ?string $country_list_of_sponsor_developer;
+  public ?string $sponsor_developer_company;
+  public ?string $country_list_of_lender_financier;
+  public ?string $lender_financier_company;
+  public ?string $country_list_of_construction_epc;
+  public ?string $construction_company_epc_participant;
   public string $country;
-  public string $province_state;
+  public ?string $province_state;
   public string $district;
-  public string $tributary;
+  public ?string $tributary;
   public float $latitude;
   public float $longitude;
-  public string $proximity;
-  public float $avg_annual_output_mwh;
-  public string $data_source;
-  public string $announce_more_information;
-  public string $link;
-  public string $latest_update;
+  public ?string $proximity;
+  public ?float $avg_annual_output_mwh;
+  public ?string $data_source;
+  public ?string $announce_more_information;
+  public ?string $link;
+  public ?string $latest_update;
 
 
   /**
@@ -40,51 +40,52 @@ class Project {
     string $project_name,
     string $subtype,
     string $current_status,
-    float $capacity_mw,
-    int $year_of_completion,
-    string $country_list_of_sponsor_developer,
-    string $sponsor_developer_company,
-    string $country_list_of_lender_financier,
-    string $lender_financier_company,
-    string $country_list_of_construction_epc,
-    string $construction_company_epc_participant,
+    ?float $capacity_mw,
+    ?int $year_of_completion,
+    ?string $country_list_of_sponsor_developer,
+    ?string $sponsor_developer_company,
+    ?string $country_list_of_lender_financier,
+    ?string $lender_financier_company,
+    ?string $country_list_of_construction_epc,
+    ?string $construction_company_epc_participant,
     string $country,
-    string $province_state,
+    ?string $province_state,
     string $district,
-    string $tributary,
+    ?string $tributary,
     float $latitude,
     float $longitude,
-    string $proximity,
-    float $avg_annual_output_mwh,
-    string $data_source,
-    string $announce_more_information,
-    string $link,
-    string $latest_update
+    ?string $proximity,
+    ?float $avg_annual_output_mwh,
+    ?string $data_source,
+    ?string $announce_more_information,
+    ?string $link,
+    ?string $latest_update
   ) {
-    $this->$id = $id;
-    $this->$project_name = $project_name;
-    $this->$subtype = $subtype;
-    $this->$current_status = $current_status;
-    $this->$capacity_mw = $capacity_mw;
-    $this->year_of_completion = $year_of_completion;
-    $this->$country_list_of_sponsor_developer = $country_list_of_sponsor_developer;
-    $this->$sponsor_developer_company =  $sponsor_developer_company;
-    $this->$country_list_of_lender_financier;
-    $this->$lender_financier_company;
-    $this->$country_list_of_construction_epc;
-    $this->$construction_company_epc_participant;
-    $this->$country = $country;
-    $this->$province_state = $province_state;
-    $this->$district = $district;
-    $this->$tributary = $tributary;
-    $this->$latitude = $latitude;
-    $this->$longitude = $longitude;
-    $this->$proximity = $proximity;
-    $this->$avg_annual_output_mwh = $avg_annual_output_mwh;
-    $this->$data_source = $data_source;
-    $this->$announce_more_information = $announce_more_information;
-    $this->$link = $link;
-    $this->$latest_update = $latest_update;
+    // If Don't have NULL coalesce -> Required field!
+    $this->id = $id; // Required!
+    $this->project_name = $project_name; // Required!
+    $this->subtype = $subtype; // Required!
+    $this->current_status = $current_status; // Required!
+    $this->capacity_mw = $capacity_mw == "" ? NULL : $capacity_mw;
+    $this->year_of_completion = $year_of_completion == "" ? NULL : $year_of_completion;
+    $this->country_list_of_sponsor_developer = $country_list_of_sponsor_developer == "" ? NULL : $country_list_of_sponsor_developer;
+    $this->sponsor_developer_company =  $sponsor_developer_company == "" ? NULL : $sponsor_developer_company;
+    $this->country_list_of_lender_financier = $country_list_of_lender_financier == "" ? NULL : $country_list_of_lender_financier;
+    $this->lender_financier_company = $lender_financier_company == "" ? NULL : $lender_financier_company;
+    $this->country_list_of_construction_epc = $country_list_of_construction_epc == "" ? NULL : $country_list_of_construction_epc;
+    $this->construction_company_epc_participant = $construction_company_epc_participant == "" ? NULL : $country_list_of_construction_epc;
+    $this->country = $country; // Required!
+    $this->province_state = $province_state; // Required!
+    $this->district = $district; // Required!
+    $this->tributary = $tributary == "" ? NULL : $tributary;
+    $this->latitude = $latitude; // Required!
+    $this->longitude = $longitude; // Required!
+    $this->proximity = $proximity == "" ? NULL : $proximity;
+    $this->avg_annual_output_mwh = $avg_annual_output_mwh == "" ? NULL : $avg_annual_output_mwh;
+    $this->data_source = $data_source == "" ? NULL : $data_source;
+    $this->announce_more_information = $announce_more_information == "" ? NULL : $announce_more_information;
+    $this->link = $link == "" ? NULL : $link;
+    $this->latest_update = $latest_update == "" ? NULL : $latest_update;
   }
 
   /**

@@ -288,3 +288,22 @@ a.article:hover {
 }
 
 /* --- Table Attributes --- */
+.sticky-col {
+	position: -webkit-sticky;
+	position: sticky;
+}
+
+.first-col-header {
+	width: 50px;
+	min-width: 50px;
+	max-width: 50px;
+	left: 0px;
+}
+
+.first-col {
+	width: 50px;
+	min-width: 50px;
+	max-width: 50px;
+	left: 0px;
+	background-color: #f8f9fa;
+}

@@ -2,9 +2,11 @@
 
 namespace App\Models\Services;
 
+use App\Models\Entities\Project;
 use Google\Cloud\Storage\StorageClient;
 use App\Utils\BucketConfig;
 use App\Utils\ServerLogger;
+use App\Utils\MathUtils;
 
 class ProjectService {
   public $storage;
@@ -15,6 +17,29 @@ class ProjectService {
       'projectId' => 'crafty-coral-281804'
     ]);
     $this->storage->registerStreamWrapper();
+  }
+
+  /**
+   * Read all Employees in Employees.csv
+   * 
+   * @return array $emp_list -> List of employees
+   */
+  public function read_all_projects(): array {
+    $project_list = array();
+    $rows_data = $this->read_bucket_csv(BucketConfig::BUCKET_NAME, BucketConfig::PROJECT_FILE, true);
+    foreach ($rows_data as &$project) {
+      $project[0] = MathUtils::makeInteger($project[0]); // Convert id to int
+      $project[4] = MathUtils::makeFloat($project[4]); // Convert capacity to float
+      $project[5] = MathUtils::makeInteger($project[5]);
+      $project[16] = MathUtils::makeFloat($project[16]);
+      $project[17] = MathUtils::makeFloat($project[17]);
+      $project[19] = MathUtils::makeFloat($project[19]);
+      // Empty string to null for object
+      // $project = array_map(fn ($v) => $v === '' ? null : $v, $project);
+      $project_obj = new Project(...$project);
+      array_push($project_list, $project_obj);
+    }
+    return $project_list;
   }
 
   /**
@@ -94,7 +119,7 @@ class ProjectService {
     // Open a stream in read-only mode
     if ($stream = fopen($uri, "r")) {
       while (!feof($stream)) {
-        for ($i = 0; $row = fgetcsv($stream, 1000, ","); ++$i) {
+        for ($i = 0; $row = fgetcsv($stream, 10000, ","); ++$i) {
           /* Skip header switch */
           if ($skip_header == False) {
             array_push($row_list, $row);
