@@ -1,0 +1,402 @@
+<!-- Edit Modal -->
+<div
+	class="modal fade"
+	id="editModal"
+	tabindex="-1"
+	role="dialog"
+	aria-labelledby="editModalLabel"
+	aria-hidden="false"
+>
+	<div
+		class="modal-dialog modal-lg"
+		role="document"
+		style="overflow-y: initial !important"
+	>
+		<form id="edit-project-form" action="/projects/edit" method="post">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Edit Project ID</h5>
+					<button
+						type="button"
+						class="close"
+						data-dismiss="modal"
+						aria-label="Close"
+					>
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body" style="height: 80vh; overflow-y: auto">
+					<div class="form-row">
+						<input
+							type="hidden"
+							class="form-control"
+							id="edit-input-id"
+							name="id"
+							required
+						/>
+						<div class="form-group col-md-4">
+							<label for="input-project_name">Project Name</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-project_name"
+								placeholder="Project name"
+								name="project_name"
+								required
+							/>
+						</div>
+						<div class="form-group col-md-4">
+							<label for="input-subtype">Subtype</label>
+							<select
+								id="edit-input-subtype"
+								class="form-control"
+								name="subtype"
+								required
+							>
+								<option disabled selected value>Choose...</option>
+								<option>Hydro</option>
+								<option>Solar</option>
+								<option>Coal</option>
+								<option>Gas</option>
+								<option>Wind</option>
+								<option>Waste</option>
+								<option>Biomass</option>
+								<option>Oil</option>
+								<option>Geothermal</option>
+								<option>Nuclear</option>
+								<option>Mixed Fossil Fuel</option>
+							</select>
+						</div>
+						<div class="form-group col-md-4">
+							<label for="input-current_status">Current Status</label>
+							<select
+								id="edit-input-current_status"
+								class="form-control"
+								name="subtype"
+								required
+							>
+								<option disabled selected value>Choose...</option>
+								<option>Operational</option>
+								<option>Planned</option>
+								<option>Under Construction</option>
+								<option>Cancelled</option>
+								<option>Postponed</option>
+								<option>Unknown</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="input-address">Capacity (MW)</label>
+							<input
+								type="number"
+								class="form-control"
+								id="edit-input-capacity_mw"
+								name="capacity_mw"
+								min="0"
+							/>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="input-address">Year of Completion</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-year_of_completion"
+								name="year_of_completion"
+							/>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="input-gender"
+								>Country list of Sponsor/Developer</label
+							>
+							<input
+								type="text"
+								id="edit-input-country_list_of_sponsor_developer"
+								class="form-control"
+								name="country_list_of_sponsor_developer"
+							/>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="input-age">Sponsor/Developer Company</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-sponsor_developer_company"
+								name="sponsor_developer_company"
+							/>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="input-country_list_of_lender_financier"
+								>Country list of Lender/Financier</label
+							>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-country_list_of_lender_financier"
+								name="country_list_of_lender_financier"
+							/>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="input-lender_financier_company"
+								>Lender/Financier Company</label
+							>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-lender_financier_company"
+								name="lender_financier_company"
+							/>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="input-country_list_of_construction_epc"
+								>Country list of Construction/EPC</label
+							>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-country_list_of_construction_epc"
+								name="country_list_of_construction_epc"
+							/>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="input-construction_company_epc_participant"
+								>Construction Company/EPC Participant</label
+							>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-construction_company_epc_participant"
+								name="construction_company_epc_participant"
+							/>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-4">
+							<label for="input-country">Country</label>
+							{% include "Project/edit_country_dropdown.html" %}
+						</div>
+						<div class="form-group col-md-4">
+							<label for="edit-input-province_state">Province/State</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-province_state"
+								name="province_state"
+								required
+							/>
+						</div>
+						<div class="form-group col-md-4">
+							<label for="input-district">District</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-district"
+								name="district"
+								required
+							/>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-4">
+							<label for="input-tributary">Tributary</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-tributary"
+								name="tributary"
+							/>
+						</div>
+						<div class="form-group col-md-4">
+							<label for="input-address">Latitude</label>
+							<input
+								type="number"
+								class="form-control"
+								id="edit-input-latitude"
+								name="latitude"
+								required
+							/>
+						</div>
+						<div class="form-group col-md-4">
+							<label for="input-address">Longitude</label>
+							<input
+								type="number"
+								class="form-control"
+								id="edit-input-longitude"
+								name="longitude"
+								required
+							/>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-4">
+							<label for="input-proximity">Proximity</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-proximity"
+								name="proximity"
+							/>
+						</div>
+						<div class="form-group col-md-4">
+							<label for="input-address">Avg. Annual Output (MWh)</label>
+							<input
+								type="number"
+								class="form-control"
+								id="edit-input-avg_annual_output_mwh"
+								name="avg_annual_output_mwh"
+							/>
+						</div>
+						<div class="form-group col-md-4">
+							<label for="input-data_source">Data Source</label>
+							<input
+								type="number"
+								class="form-control"
+								id="edit-input-data_source"
+								name="data_source"
+							/>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-12">
+							<label for="edit-input-announce_more_information"
+								>Announcement/More information</label
+							>
+							<textarea
+								type="textarea"
+								class="form-control"
+								id="edit-input-announce_more_information"
+								name="announce_more_information"
+								rows="3"
+							></textarea>
+						</div>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-6">
+							<label for="input-link">Link</label>
+							<input
+								type="text"
+								class="form-control"
+								id="edit-input-link"
+								name="link"
+							/>
+						</div>
+						<div class="form-group col-md-6">
+							<label for="input-latest_update">Latest Update</label>
+							<input
+								type="date"
+								class="form-control"
+								id="edit-input-latest_update"
+								placeholder="mm-dd-yyyy"
+								name="latest_update"
+							/>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">
+						Cancel
+					</button>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script>
+	$(document).ready(function (e) {
+		$("#editModal").on("show.bs.modal", function (event) {
+			/* Helper functions for date picker */
+			const dateToInput = (date) =>
+				`${date.getFullYear()}-${("0" + (date.getMonth() + 1)).slice(-2)}-${(
+					"0" + date.getDate()
+				).slice(-2)}`;
+			// str is expected in yyyy-mm-dd format (e.g., "2017-03-14")
+			const inputToDate = (str) => new Date(str.split("-"));
+			/* Edit processing Part */
+			// Parse data from data aria attributes
+			let button = $(event.relatedTarget);
+			let id = parseInt(button.data("id"));
+			let project_name = button.data("projectname");
+			let subtype = button.data("subtype");
+			let current_status = button.data("currentstatus");
+			let capacity_mw = parseInt(button.data("capacitymw"), 10);
+			let year_of_completion = button.data("yearofcompletion");
+			let country_list_of_sponsor_developer = button.data(
+				"countrylistofsponsordeveloper"
+			);
+			let sponsor_developer_company = button.data("sponsordevelopercompany");
+			let country_list_of_lender_financier = button.data(
+				"countrylistoflenderfinancier"
+			);
+			let lender_financier_company = button.data("lenderfinanciercompany");
+			let country_list_of_construction_epc = button.data(
+				"countrylistofconstruction_epc"
+			);
+			let construction_company_epc_participant = button.data(
+				"constructioncompanyepcparticipant"
+			);
+			let country = button.data("country");
+			let province_state = button.data("provincestate");
+			let district = button.data("district");
+			let tributary = button.data("tributary");
+			let latitude = button.data("latitude");
+			let longitude = button.data("longitude");
+			let proximity = button.data("proximity");
+			let avg_annual_output_mwh = button.data("avgannualoutputmwh");
+			let data_source = button.data("data_source");
+			let announce_more_information = button.data("announcemoreinformation");
+			let link = button.data("link");
+			let latest_update = button.data("latestupdate");
+			if (latest_update.length >= 6) {
+				var timestamp = Date.parse(latest_update);
+				var date = new Date(timestamp);
+				console.log(date);
+			} else {
+				var date = new Date();
+			}
+			$("#edit-project-form").attr("action", `/projects/edit`);
+			// Edit Modal
+			var modal = $(this);
+			modal.find(".modal-title").text(`Edit Project ID ${id}`);
+			$("#edit-input-id").val(id);
+			$("#edit-input-project_name").val(project_name);
+			$("#edit-input-subtype").val(subtype);
+			$("#edit-input-current_status").val(current_status);
+			$("#edit-input-capacity_mw").val(capacity_mw);
+			$("#edit-input-year_of_completion").val(year_of_completion);
+			$("#edit-input-country_list_of_sponsor_developer").val(
+				country_list_of_sponsor_developer
+			);
+			$("#edit-input-sponsor_developer_company").val(sponsor_developer_company);
+			$("#edit-input-country_list_of_lender_financier").val(
+				country_list_of_lender_financier
+			);
+			$("#edit-input-lender_financier_company").val(lender_financier_company);
+			$("#edit-input-country_list_of_construction_epc").val(
+				country_list_of_construction_epc
+			);
+			$("#edit-input-construction_company_epc_participant").val(
+				construction_company_epc_participant
+			);
+			$("#edit-input-country").val(country);
+			$("#edit-input-province_state").val(province_state);
+			$("#edit-input-district").val(district);
+			$("#edit-input-tributary").val(tributary);
+			$("#edit-input-latitude").val(latitude);
+			$("#edit-input-longitude").val(longitude);
+			$("#edit-input-proximity").val(proximity);
+			$("#edit-input-avg_annual_output_mwh").val(avg_annual_output_mwh);
+			$("#edit-input-data_source").val(data_source);
+			$("#edit-input-announce_more_information").val(announce_more_information);
+			$("#edit-input-link").val(link);
+			$("#edit-input-latest_update").val(dateToInput(date));
+		});
+	});
+</script>
