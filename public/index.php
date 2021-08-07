@@ -5,8 +5,6 @@ use App\Utils\ServerLogger;
 // use ArgumentsResolver\InDepthArgumentsResolver;
 use ArgumentsResolver\NamedArgumentsResolver;
 
-
-
 /**
  * Define STDIN, STDOUT and STDERR stream output for PHP built-in web server
  * And
@@ -49,7 +47,7 @@ switch ($routeInfo[0]) {
     break;
   case FastRoute\Dispatcher::FOUND:
     $handler = $routeInfo[1];
-    $vars = ($httpMethod == 'POST') ? $_POST : $routeInfo[2];
+    $vars = ($httpMethod == 'POST') ? array_map([App\Utils\FilterUtils::class, 'mask_empty'], $_POST) : $routeInfo[2];
     list($class, $method) = explode("/", $handler, 2);
     ServerLogger::log("=> Form Vars:", $vars);
     call_user_func_array(array($container->get($class), $method), (new NamedArgumentsResolver([$container->get($class), $method]))->resolve($vars));

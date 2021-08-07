@@ -6,6 +6,7 @@ use App\Utils\View;
 use App\Models\Services\ProjectService;
 use App\Utils\ServerLogger;
 
+
 class ProjectController {
 
   public $projectService;
@@ -52,6 +53,39 @@ class ProjectController {
     ?string $latest_update
   ) {
     ServerLogger::log("Form posted (project's name): " . $project_name);
-    header("Location: " . getenv("DEPLOY_URL") ? getenv("DEPLOY_URL") : "http://localhost:8080");
+    $result = $this->projectService->add_employee(
+      $project_name,
+      $subtype,
+      $current_status,
+      $capacity_mw,
+      $year_of_completion,
+      $country_list_of_sponsor_developer,
+      $sponsor_developer_company,
+      $country_list_of_lender_financier,
+      $lender_financier_company,
+      $country_list_of_construction_epc,
+      $construction_company_epc_participant,
+      $country,
+      $province_state,
+      $district,
+      $tributary,
+      $latitude,
+      $longitude,
+      $proximity,
+      $avg_annual_output_mwh,
+      $data_source,
+      $announce_more_information,
+      $link,
+      $latest_update
+    );
+    if ($result) {
+      ServerLogger::log("=> Inserted Project {$result->id} successfully!");
+      $location = getenv("DEPLOY_URL") ? getenv("DEPLOY_URL") : "http://localhost:8080";
+      header("Location: $location");
+      exit;
+    }
+    $location = getenv("DEPLOY_URL") ? getenv("DEPLOY_URL") : "http://localhost:8080";
+    header("Location: $location");
+    exit;
   }
 }
