@@ -19,6 +19,7 @@ $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) 
   $r->addRoute('GET', '/projects', 'App\Controllers\ProjectController/index');
   $r->addRoute('POST', '/projects/add', 'App\Controllers\ProjectController/add');
   $r->addRoute('POST', '/projects/edit', 'App\Controllers\ProjectController/edit');
+  $r->addRoute('POST', '/projects/delete', 'App\Controllers\ProjectController/delete');
 });
 
 $container = new DI\Container();
@@ -40,6 +41,7 @@ $routeInfo = $dispatcher->dispatch($httpMethod, $uri);
 switch ($routeInfo[0]) {
   case FastRoute\Dispatcher::NOT_FOUND:
     // ... 404 Not found
+    call_user_func(array($container->get("App\Controllers\ErrorController"), 'error'));
     break;
   case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
     $allowedMethods = $routeInfo[1];

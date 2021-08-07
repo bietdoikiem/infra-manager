@@ -72,7 +72,7 @@
 							<select
 								id="edit-input-current_status"
 								class="form-control"
-								name="subtype"
+								name="current_status"
 								required
 							>
 								<option disabled selected value>Choose...</option>
@@ -94,6 +94,7 @@
 								id="edit-input-capacity_mw"
 								name="capacity_mw"
 								min="0"
+								step="any"
 							/>
 						</div>
 						<div class="form-group col-md-6">
@@ -219,6 +220,7 @@
 								class="form-control"
 								id="edit-input-latitude"
 								name="latitude"
+								step="any"
 								required
 							/>
 						</div>
@@ -229,6 +231,7 @@
 								class="form-control"
 								id="edit-input-longitude"
 								name="longitude"
+								step="any"
 								required
 							/>
 						</div>
@@ -250,12 +253,14 @@
 								class="form-control"
 								id="edit-input-avg_annual_output_mwh"
 								name="avg_annual_output_mwh"
+								min="0"
+								step="any"
 							/>
 						</div>
 						<div class="form-group col-md-4">
 							<label for="input-data_source">Data Source</label>
 							<input
-								type="number"
+								type="text"
 								class="form-control"
 								id="edit-input-data_source"
 								name="data_source"
@@ -326,7 +331,7 @@
 			let project_name = button.data("projectname");
 			let subtype = button.data("subtype");
 			let current_status = button.data("currentstatus");
-			let capacity_mw = parseInt(button.data("capacitymw"), 10);
+			let capacity_mw = parseFloat(button.data("capacitymw"));
 			let year_of_completion = button.data("yearofcompletion");
 			let country_list_of_sponsor_developer = button.data(
 				"countrylistofsponsordeveloper"
@@ -346,10 +351,10 @@
 			let province_state = button.data("provincestate");
 			let district = button.data("district");
 			let tributary = button.data("tributary");
-			let latitude = button.data("latitude");
-			let longitude = button.data("longitude");
+			let latitude = parseFloat(button.data("latitude"));
+			let longitude = parseFloat(button.data("longitude"));
 			let proximity = button.data("proximity");
-			let avg_annual_output_mwh = button.data("avgannualoutputmwh");
+			let avg_annual_output_mwh = parseFloat(button.data("avgannualoutputmwh"));
 			let data_source = button.data("data_source");
 			let announce_more_information = button.data("announcemoreinformation");
 			let link = button.data("link");

@@ -2,6 +2,8 @@
 
 namespace App\Models\Entities;
 
+use App\Utils\ServerLogger;
+
 class Project {
 
   /* Define attributes */
@@ -66,8 +68,8 @@ class Project {
     $this->project_name = $project_name; // Required!
     $this->subtype = $subtype; // Required!
     $this->current_status = $current_status; // Required!
-    $this->capacity_mw = $capacity_mw == "" ? NULL : $capacity_mw;
-    $this->year_of_completion = $year_of_completion == "" ? NULL : $year_of_completion;
+    $this->capacity_mw = $capacity_mw;
+    $this->year_of_completion = $year_of_completion;
     $this->country_list_of_sponsor_developer = $country_list_of_sponsor_developer == "" ? NULL : $country_list_of_sponsor_developer;
     $this->sponsor_developer_company =  $sponsor_developer_company == "" ? NULL : $sponsor_developer_company;
     $this->country_list_of_lender_financier = $country_list_of_lender_financier == "" ? NULL : $country_list_of_lender_financier;
@@ -81,7 +83,7 @@ class Project {
     $this->latitude = $latitude; // Required!
     $this->longitude = $longitude; // Required!
     $this->proximity = $proximity == "" ? NULL : $proximity;
-    $this->avg_annual_output_mwh = $avg_annual_output_mwh == "" ? NULL : $avg_annual_output_mwh;
+    $this->avg_annual_output_mwh = $avg_annual_output_mwh;
     $this->data_source = $data_source == "" ? NULL : $data_source;
     $this->announce_more_information = $announce_more_information == "" ? NULL : $announce_more_information;
     $this->link = $link == "" ? NULL : $link;

@@ -50,7 +50,7 @@ class ProjectService {
    * ... more info params
    * @return Project|null
    */
-  public function add_employee(
+  public function add_project(
     string $project_name,
     string $subtype,
     string $current_status,
@@ -117,13 +117,83 @@ class ProjectService {
     return null;
   }
 
+  /**
+   * Edit a project in project.csv
+   * 
+   * @param string $project_name
+   * ... more info params
+   * @return Project|null
+   */
+  public function edit_project(
+    int $id,
+    string $project_name,
+    string $subtype,
+    string $current_status,
+    ?float $capacity_mw,
+    ?int $year_of_completion,
+    ?string $country_list_of_sponsor_developer,
+    ?string $sponsor_developer_company,
+    ?string $country_list_of_lender_financier,
+    ?string $lender_financier_company,
+    ?string $country_list_of_construction_epc,
+    ?string $construction_company_epc_participant,
+    string $country,
+    ?string $province_state,
+    string $district,
+    ?string $tributary,
+    float $latitude,
+    float $longitude,
+    ?string $proximity,
+    ?float $avg_annual_output_mwh,
+    ?string $data_source,
+    ?string $announce_more_information,
+    ?string $link,
+    ?string $latest_update
+  ) {
+    // Read all data first before editing
+    $rows_data = $this->read_bucket_csv(BucketConfig::BUCKET_NAME, BucketConfig::PROJECT_FILE, false);
+    ServerLogger::log("=> Performing editing new project to CSV file!");
+    $list_of_args = func_get_args();
+    foreach ($rows_data as &$project) {
+      if ($project[0] == $id) {
+        for ($i = 1; $i < count($project); $i++) {
+          $project[$i] = $list_of_args[$i];
+        }
+        break;
+      }
+    }
+    $result = $this->write_bucket_csv_multiple($rows_data, BucketConfig::BUCKET_NAME, BucketConfig::PROJECT_FILE);
+    // Construct Project object to return
+    if ($result) {
+      $edited_project = new Project(...func_get_args());
+      return $edited_project;
+    }
+    return null;
+  }
+
+  /**
+   * Delete a project from project.csv
+   * 
+   * @param int $id Id of the project
+   * @return bool Return true if success otherwise false
+   */
+  public function delete_project(int $id) {
+    ServerLogger::log("=> Deleting line {$id} in project file...");
+    $result = $this->delete_bucket_csv_by_line($id, BucketConfig::BUCKET_NAME, BucketConfig::PROJECT_FILE);
+    if ($result == False) {
+      ServerLogger::log("=> CANNOT Delete a line {$id}. Please check again!");
+      return false;
+    }
+    ServerLogger::log("=> SUCCESSFULLY Delete a line {$id}.");
+    return true;
+  }
   // ------------ /// ------------Helper Functions---------------/// ------------- //
 
   /**
    * Read a CSV object on Cloud Storage
    * 
-   * @param string $bucketName
-   * @param string $objectName
+   * @param string $bucketName Name of Cloud Storage Bucket
+   * @param string $objectName Filename of object
    * @return array
    */
   public function read_bucket_csv(string $bucketName, string $objectName, bool $skip_header): array {
@@ -137,8 +207,8 @@ class ProjectService {
   /**
    * Read a file on bucket
    * 
-   * @param string $bucketName
-   * @param string $objectName
+   * @param string $bucketName Name of Cloud Storage Bucket
+   * @param string $objectName Filename of object
    * @return string
    */
   public function read_bucket_file(string $bucketName, string $objectName): string {
@@ -154,8 +224,8 @@ class ProjectService {
    * Write a file on bucket
    * 
    * @param string $data
-   * @param string $bucketName
-   * @param string $objectName
+   * @param string $bucketName Name of Cloud Storage Bucket
+   * @param string $objectName Filename of object
    * @return string
    */
   public function write_bucket_file(string $data, string $bucketName, string $objectName): string {
@@ -170,8 +240,8 @@ class ProjectService {
    * Insert to the end of bucket object file CSV
    * 
    * @param array $row Row of data
-   * @param string $bucketName
-   * @param string $objectName
+   * @param string $bucketName Name of Cloud Storage Bucket
+   * @param string $objectName Filename of object
    * @return bool
    */
   public function insert_bucket_csv(array $row, string $bucketName, string $objectName): bool {
@@ -191,7 +261,8 @@ class ProjectService {
    * Write CSV file on bucket storage with multiple rows at a time
    * 
    * @param array $rows 2D array of CSV rows
-   * @param string $uri Link to resource
+   * @param string $bucketName Name of Cloud Storage Bucket
+   * @param string $objectName Filename of object
    * @return bool
    */
   public function write_bucket_csv_multiple(array $rows, string $bucketName, string $objectName): bool {
@@ -206,6 +277,28 @@ class ProjectService {
     return true;
   }
 
+
+  /**
+   * Write CSV file on bucket storage with multiple rows at a time
+   * 
+   * @param mixed $identifier Identifier of row
+   * @param string $bucketName Name of Cloud Storage Bucket
+   * @param string $objectName Filename of object
+   * @return bool Return true if success otherwise false
+   */
+  public function delete_bucket_csv_by_line($identifier, string $bucketName, string $objectName): bool {
+    ServerLogger::log("=> Performing edit row to a CSV file for object " . $objectName);
+    $objectURI = "gs://{$bucketName}/{$objectName}";
+    $result = $this->delete_csv_by_line($identifier, $objectURI);
+    if ($result == false) {
+      ServerLogger::log("=> CANNOT delete a line ($identifier) in {$objectURI}" . PHP_EOL);
+      return false;
+    }
+    ServerLogger::log("=> Successfully delete a line ($identifier) in {$objectURI}" . PHP_EOL);
+    return true;
+  }
+
+  // ------------- Pure files ----------------- //
 
   /**
    * Read a CSV file
@@ -304,6 +397,32 @@ class ProjectService {
       return false;
     }
     fclose($stream);
+    return true;
+  }
+
+  /**
+   * Delete a row in CSV file
+   * @param mixed $identifer Any identifier at the first column of CSV row
+   * @param string $uri Link to resource
+   * @return boolean Return true if success otherwise false
+   */
+  public function delete_csv_by_line($identifier, string $uri) {
+    $temp = tempnam(sys_get_temp_dir(), 'TMP_');
+    $temp_stream = fopen($temp, "w");
+    if ($stream = fopen($uri, "r")) {
+      while (($row = fgetcsv($stream, 1000)) !== false) {
+        if (reset($row) == $identifier) {
+          continue;
+        }
+        fputcsv($temp_stream, $row);
+      }
+    } else {
+      return false;
+    }
+    fclose($temp_stream);
+    fclose($stream);
+    file_put_contents($uri, file_get_contents($temp));
+    unlink($temp);
     return true;
   }
 }

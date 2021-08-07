@@ -4,9 +4,9 @@ endblock %} {% block body %}
 
 <div id="inner-project-content">
 	<!-- Table -->
-	<h2>List of Projects</h2>
 	<!-- Button trigger modal -->
 	<div class="table-actions mb-2" style="display: flex">
+		<h3 style="margin-right: auto">List of Projects</h3>
 		<button
 			type="button"
 			class="btn btn-primary"
@@ -22,7 +22,9 @@ endblock %} {% block body %}
 		<table class="table">
 			<thead class="thead-light">
 				<tr>
-					<th class="sticky-col first-col-header" scope="col">ID</th>
+					<th class="sticky-col sticky-header first-col-header" scope="col">
+						ID
+					</th>
 					<th scope="col">Project Name</th>
 					<th scope="col">Subtype</th>
 					<th scope="col">Current Status</th>
@@ -56,7 +58,7 @@ endblock %} {% block body %}
 					<td>{{ project.project_name }}</td>
 					<td>{{ project.subtype }}</td>
 					<td>{{ project.current_status }}</td>
-					<td>{{ project.capacity_mwh ?? "N/A" }}</td>
+					<td>{{ project.capacity_mw ?? "N/A" }}</td>
 					<td>{{ project.year_of_completion ?? "N/A" }}</td>
 					<td>{{ project.country_list_of_sponsor_developer ?? "N/A" }}</td>
 					<td>{{ project.sponsor_developer_company ?? "N/A" }}</td>
@@ -96,7 +98,7 @@ endblock %} {% block body %}
 							data-projectname="{{ project.project_name }}"
 							data-subtype="{{ project.subtype }}"
 							data-currentstatus="{{ project.current_status }}"
-							data-capacitymwh="{{ project.capacity_mwh }}"
+							data-capacitymw="{{ project.capacity_mw }}"
 							data-yearofcompletion="{{ project.year_of_completion }}"
 							data-countrylistofsponsordeveloper="{{ project.country_list_of_sponsor_developer }}"
 							data-sponsordevelopercompany="{{ project.sponsor_developer_company }}"
