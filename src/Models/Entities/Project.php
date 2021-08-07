@@ -20,7 +20,7 @@ class Project {
   public ?string $country_list_of_construction_epc;
   public ?string $construction_company_epc_participant;
   public string $country;
-  public ?string $province_state;
+  public string $province_state;
   public string $district;
   public ?string $tributary;
   public float $latitude;

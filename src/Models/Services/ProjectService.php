@@ -7,23 +7,30 @@ use Google\Cloud\Storage\StorageClient;
 use App\Utils\BucketConfig;
 use App\Utils\ServerLogger;
 use App\Utils\MathUtils;
-use Exception;
+use Google\Cloud\BigQuery\BigQueryClient;
 
 class ProjectService {
   public $storage;
+  public $bigQuery;
 
   public function __construct() {
+    // Initialize connection to Cloud Storage
     $this->storage = new StorageClient([
       'keyFile' => json_decode(file_get_contents(dirname(dirname(__DIR__)) . '/Resources/crafty-coral-281804-c3a7354e1ae6.json'), true),
       'projectId' => 'crafty-coral-281804'
     ]);
     $this->storage->registerStreamWrapper();
+    // Initialize Connection to BigQuery
+    $this->bigQuery = new BigQueryClient([
+      'keyFile' => json_decode(file_get_contents(dirname(dirname(__DIR__)) . '/Resources/crafty-coral-281804-c3a7354e1ae6.json'), true),
+      'projectId' => BucketConfig::GCLOUD_PROJECT_ID,
+    ]);
   }
 
   /**
-   * Read all Employees in Employees.csv
+   * Read all Projects in project.csv
    * 
-   * @return array $emp_list -> List of employees
+   * @return Project[] $project_list -> List of projects
    */
   public function read_all_projects(): array {
     $project_list = array();
@@ -35,8 +42,38 @@ class ProjectService {
       $project[16] = MathUtils::makeFloat($project[16]);
       $project[17] = MathUtils::makeFloat($project[17]);
       $project[19] = MathUtils::makeFloat($project[19]);
-      // Empty string to null for object
-      // $project = array_map(fn ($v) => $v === '' ? null : $v, $project);
+      $project_obj = new Project(...$project);
+      array_push($project_list, $project_obj);
+    }
+    return $project_list;
+  }
+
+  /**
+   * Read all Projects in BigQuery Dataset (cursor pagination STYLE!)
+   * 
+   * @return Project[] $project_list -> List of projects
+   */
+  public function read_projects_bigquery(?int $cursor_id, ?string $direction, ?int $pageNo): array {
+    $project_list = array();
+    // Setup query
+    $table_id = "crafty-coral-281804.mekong_project_infra.project";
+    $query_statement = <<<EOT
+    SELECT * 
+    FROM `$table_id`
+    ORDER BY id
+    LIMIT 10
+    EOT;
+    // Setup jobs for executing queries
+    $jobConfig = $this->bigQuery->query($query_statement);
+    $rows_data = $this->bigQuery->runQuery($jobConfig);
+    foreach ($rows_data as $_ => $project) {
+      $idx = array_keys($project); // Convert arbitrary key to manual array's number index
+      $project[$idx[0]] = MathUtils::makeInteger($project[$idx[0]]); // Convert id to int
+      $project[$idx[4]] = MathUtils::makeFloat($project[$idx[4]]); // Convert capacity to float
+      $project[$idx[5]] = MathUtils::makeInteger($project[$idx[5]]);
+      $project[$idx[16]] = MathUtils::makeFloat($project[$idx[16]]);
+      $project[$idx[17]] = MathUtils::makeFloat($project[$idx[17]]);
+      $project[$idx[19]] = MathUtils::makeFloat($project[$idx[19]]);
       $project_obj = new Project(...$project);
       array_push($project_list, $project_obj);
     }

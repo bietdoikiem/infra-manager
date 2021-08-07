@@ -22,9 +22,7 @@ endblock %} {% block body %}
 		<table class="table">
 			<thead class="thead-light">
 				<tr>
-					<th class="sticky-col sticky-header first-col-header" scope="col">
-						ID
-					</th>
+					<th class="sticky-col first-col-header" scope="col">ID</th>
 					<th scope="col">Project Name</th>
 					<th scope="col">Subtype</th>
 					<th scope="col">Current Status</th>
@@ -80,7 +78,6 @@ endblock %} {% block body %}
 					<td>{{ project.latest_update ?? "N/A" }}</td>
 					<td>
 						<form
-							id="delete-project"
 							action="/projects/delete"
 							role="button"
 							class="delete-form ml-2 float-right"
@@ -134,6 +131,57 @@ endblock %} {% block body %}
 				{% endfor %}
 			</tbody>
 		</table>
+	</div>
+	<!-- Pagination -->
+	<div class="mt-2 float-right">
+		<nav aria-label="Pagination">
+			<ul class="pagination">
+				<li class="page-item">
+					<a class="page-link" href="#" aria-label="Previous">
+						<span aria-hidden="true">&laquo; First</span>
+					</a>
+				</li>
+				<li class="page-item">
+					<a class="page-link" href="#" aria-label="Previous">
+						<span aria-hidden="true">&laquo;</span>
+						<span class="sr-only">Previous</span>
+					</a>
+				</li>
+				<li class="page-item">
+					<div
+						class="input-group md-form form-sm form-2 pl-0"
+						style="width: 100px"
+					>
+						<input
+							id="go-to-page"
+							class="form-control shadow-none"
+							type="number"
+							aria-label="go-to-page"
+						/>
+						<div class="input-group-append">
+							<a href="/projects?page=1">
+								<span class="input-group-text page-link" id="page-navigate"
+									><i
+										class="fas fa-search text-grey"
+										aria-hidden="true"
+									></i></span
+							></a>
+						</div>
+					</div>
+				</li>
+				<li class="page-item">
+					<a class="page-link" href="#" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+						<span class="sr-only">Next</span>
+					</a>
+				</li>
+				<li class="page-item">
+					<a class="page-link" href="#" aria-label="Previous">
+						<span aria-hidden="true">Last &raquo;</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
 	</div>
 
 	<script>

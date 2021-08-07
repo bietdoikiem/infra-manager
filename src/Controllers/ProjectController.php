@@ -20,7 +20,7 @@ class ProjectController {
    */
   public function index() {
     // Read all projects
-    $project_list = $this->projectService->read_all_projects();
+    $project_list = $this->projectService->read_projects_bigquery(null, null, null);
     // Render page
     View::renderTemplate('Project/index.html', [
       'project_list' => $project_list
