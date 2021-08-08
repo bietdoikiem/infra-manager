@@ -20,6 +20,7 @@ if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
   $r->addRoute('GET', '/', 'App\Controllers\ProjectController/index');
   $r->addRoute('GET', '/projects', 'App\Controllers\ProjectController/index');
+  $r->addRoute('GET', '/projects/search', 'App\Controllers\ProjectController/search');
   $r->addRoute('POST', '/projects/add', 'App\Controllers\ProjectController/add');
   $r->addRoute('POST', '/projects/edit', 'App\Controllers\ProjectController/edit');
   $r->addRoute('POST', '/projects/delete', 'App\Controllers\ProjectController/delete');
@@ -57,6 +58,10 @@ switch ($routeInfo[0]) {
     list($class, $method) = explode("/", $handler, 2);
     if (isset($_GET['page']) && isset($_GET['size'])) {
       $vars = $_GET;
+    } else if (isset($_GET['keyword']) && isset($_GET['country'])) {
+      $vars = $_GET;
+      ServerLogger::log("=> Route Vars:", $vars);
+      ServerLogger::log("Hello SEARCH");
     }
     ServerLogger::log("=> Route Vars:", $vars);
     call_user_func_array(array($container->get($class), $method), (new NamedArgumentsResolver([$container->get($class), $method]))->resolve($vars));

@@ -1,12 +1,12 @@
-{% extends "base.html" %} {% block title %}Projects {% endblock %} {% block
-header_title %} Projects {% endblock %} {% block breadcrumb %} Projects {%
-endblock %} {% block body %}
+{% extends "base.html" %} {% block title %}Projects - Search {% endblock %} {%
+block header_title %} Search Results {% endblock %} {% block breadcrumb %}
+Projects > Search {% endblock %} {% block body %}
 
 <div id="inner-project-content">
 	<!-- Table -->
 	<!-- Button trigger modal -->
 	<div class="table-actions mb-3" style="display: flex">
-		<h3 style="margin-right: auto">List of Projects</h3>
+		<h3 style="margin-right: auto">Search Results</h3>
 		<div class="right-menu-wrapper" style="margin-left: auto">
 			<div class="input-group" style="width: 500px; display: inline-flex">
 				<form id="search-form" action="/projects/search" method="get">
@@ -16,10 +16,10 @@ endblock %} {% block body %}
 						class="form-control shadow-none"
 						onfocus="this.placeholder = ''"
 						onblur="this.placeholder = 'Enter project name'"
-						name="keyword"
 						placeholder="Enter project name"
 						aria-label="Project name"
 						aria-describedby="basic-addon1"
+						name="keyword"
 					/>
 					<div class="input-group-append" style="width: 200px">
 						{% include "Project/search_country_dropdown.html" %}
@@ -329,11 +329,6 @@ endblock %} {% block body %}
 					"href",
 					`/projects?page=${last_page}&size=${size}`
 				);
-				/* Fake form for search function */
-				$(".search-project-link").click(function (e) {
-					e.preventDefault();
-					$("#search-form").submit();
-				});
 			});
 			/* Handle min max */
 			$('input[type="number"]').on("keyup", function () {
@@ -351,6 +346,7 @@ endblock %} {% block body %}
 			$(".search-project-link").click(function (e) {
 				e.preventDefault();
 				$("#search-form").submit();
+				return false;
 			});
 		});
 		function get_last_page(total_result, size) {

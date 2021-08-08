@@ -49,8 +49,10 @@ class ProjectService {
   }
 
   /**
-   * Read all Projects in BigQuery Dataset (cursor pagination STYLE!)
+   * Read all Projects in BigQuery Dataset (offset pagination STYLE!)
    * 
+   * @param int $page_size Page size for query
+   * @param int $page_no Page number for query
    * @return array [0] -> Project list; [1] -> Total results of query
    */
   public function read_projects_bigquery(int $page_size = 10, int $page_no = 1): array {
@@ -88,7 +90,67 @@ class ProjectService {
     return $return_result;
   }
 
-  public function count_total_bigquery($table_id): int {
+  /**
+   * Search all Projects in BigQuery Dataset with Project's name and country (offset pagination STYLE!)
+   * 
+   * @param string $keyword Search keyword for project's name
+   * @param string $country Country filter for project
+   * @param int $page_size Page size for query
+   * @param int $page_no Page number for query
+   * @return array [0] -> Project list; [1] -> Total results of query
+   */
+  public function search_projects_bigquery(string $keyword = "", string $country = "", int $page_size = 10, int $page_no = 1): array {
+    $project_list = array();
+    $total_offset = ($page_no - 1) * $page_size;
+    // Setup query
+    $table_id = "crafty-coral-281804.mekong_project_infra.project";
+    $where_query = "";
+    /* Case condition to perform correct condition for query */
+    if ((empty($keyword) || ctype_space($keyword)) && (!empty($country) || !ctype_space($country))) {
+      $where_query = "WHERE LOWER(country) = LOWER('{$country}')";
+    } else if ((empty($country) || ctype_space($country)) && (!empty($keyword) || !ctype_space($keyword))) {
+      $where_query = "WHERE LOWER(project_name) LIKE LOWER('%{$keyword}%')";
+    } else if ((!empty($keyword) || !ctype_space($keyword)) && (!empty($country) || !ctype_space($country))) {
+      $where_query = "WHERE LOWER(project_name) LIKE LOWER('%{$keyword}%') AND LOWER(country) = LOWER('{$country}')";
+    }
+    $query_statement = <<<EOT
+    SELECT * 
+    FROM `$table_id`
+    {$where_query}
+    ORDER BY id ASC
+    LIMIT $page_size
+    OFFSET {$total_offset}
+    EOT;
+    // Setup jobs for executing queries
+    $jobConfig = $this->bigQuery->query($query_statement);
+    $rows_data = $this->bigQuery->runQuery($jobConfig);
+    foreach ($rows_data as $_ => $project) {
+      $idx = array_keys($project); // Convert arbitrary key to manual array's number index
+      $project[$idx[0]] = MathUtils::makeInteger($project[$idx[0]]); // Convert id to int
+      $project[$idx[4]] = MathUtils::makeFloat($project[$idx[4]]); // Convert capacity to float
+      $project[$idx[5]] = MathUtils::makeInteger($project[$idx[5]]);
+      $project[$idx[16]] = MathUtils::makeFloat($project[$idx[16]]);
+      $project[$idx[17]] = MathUtils::makeFloat($project[$idx[17]]);
+      $project[$idx[19]] = MathUtils::makeFloat($project[$idx[19]]);
+      $project_obj = new Project(...$project);
+      array_push($project_list, $project_obj);
+    }
+    /* Calculate total query results */
+    $total_result = $this->count_total_subquery_bigquery($query_statement);
+
+    /* Aggregate return results for bigquery function */
+    $return_result = array();
+    array_push($return_result, $project_list, $total_result);
+    return $return_result;
+  }
+
+  /**
+   * Count total of rows from a table in BigQuery
+   * 
+   * @param string $table_id Id of table on BigQuery dataset
+   * @return int Total rows of the dataset OR zero row if can't find one
+   */
+  public function count_total_bigquery(string $table_id): int {
     $query_statement = <<<EOT
     SELECT COUNT(*) total_result 
     FROM `$table_id`;
@@ -101,6 +163,27 @@ class ProjectService {
     }
     return 0;
   }
+
+  /**
+   * Count total of rows from a Sub-query in BigQuery
+   * 
+   * @param string $table_id Id of table on BigQuery dataset
+   * @return int Total rows of the dataset OR zero row if can't find one
+   */
+  public function count_total_subquery_bigquery(string $subquery): int {
+    $query_statement = <<<EOT
+    SELECT COUNT(*) total_result 
+    FROM ($subquery);
+    EOT;
+    // Setup jobs for executing queries
+    $jobConfig = $this->bigQuery->query($query_statement);
+    $rows_data = $this->bigQuery->runQuery($jobConfig);
+    foreach ($rows_data as $row) {
+      return $row['total_result'];
+    }
+    return 0;
+  }
+
 
   /**
    * Add a new project to project.csv

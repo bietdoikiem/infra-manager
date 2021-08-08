@@ -32,6 +32,23 @@ class ProjectController {
     ]);
   }
 
+  /**
+   * Index page
+   */
+  public function search(string $keyword = "", string $country = "", int $size = 10, int $page = 1) {
+    // Read all projects
+    $result = $this->projectService->search_projects_bigquery($keyword, $country, $size, $page);
+    $project_list = $result[0];
+    $count_project_list = count($project_list);
+    $total_result = $result[1];
+    // Render page
+    View::renderTemplate('Project/search_index.html', [
+      'project_list' => $project_list,
+      'total_result' => $total_result,
+      'count_project_list' => $count_project_list
+    ]);
+  }
+
   public function add(
     string $project_name,
     string $subtype,
