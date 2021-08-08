@@ -18,12 +18,17 @@ class ProjectController {
   /**
    * Index page
    */
-  public function index() {
+  public function index(int $size = 10, int $page = 1) {
     // Read all projects
-    $project_list = $this->projectService->read_projects_bigquery(null, null, null);
+    $result = $this->projectService->read_projects_bigquery($size, $page);
+    $project_list = $result[0];
+    $count_project_list = count($project_list);
+    $total_result = $result[1];
     // Render page
     View::renderTemplate('Project/index.html', [
-      'project_list' => $project_list
+      'project_list' => $project_list,
+      'total_result' => $total_result,
+      'count_project_list' => $count_project_list
     ]);
   }
 

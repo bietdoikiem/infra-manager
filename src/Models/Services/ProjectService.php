@@ -51,17 +51,19 @@ class ProjectService {
   /**
    * Read all Projects in BigQuery Dataset (cursor pagination STYLE!)
    * 
-   * @return Project[] $project_list -> List of projects
+   * @return array [0] -> Project list; [1] -> Total results of query
    */
-  public function read_projects_bigquery(?int $cursor_id, ?string $direction, ?int $pageNo): array {
+  public function read_projects_bigquery(int $page_size = 10, int $page_no = 1): array {
     $project_list = array();
+    $total_offset = ($page_no - 1) * $page_size;
     // Setup query
     $table_id = "crafty-coral-281804.mekong_project_infra.project";
     $query_statement = <<<EOT
     SELECT * 
     FROM `$table_id`
-    ORDER BY id
-    LIMIT 10
+    ORDER BY id ASC
+    LIMIT $page_size
+    OFFSET {$total_offset}
     EOT;
     // Setup jobs for executing queries
     $jobConfig = $this->bigQuery->query($query_statement);
@@ -77,7 +79,27 @@ class ProjectService {
       $project_obj = new Project(...$project);
       array_push($project_list, $project_obj);
     }
-    return $project_list;
+    /* Calculate total query results */
+    $total_result = $this->count_total_bigquery($table_id);
+
+    /* Aggregate return results for bigquery function */
+    $return_result = array();
+    array_push($return_result, $project_list, $total_result);
+    return $return_result;
+  }
+
+  public function count_total_bigquery($table_id): int {
+    $query_statement = <<<EOT
+    SELECT COUNT(*) total_result 
+    FROM `$table_id`;
+    EOT;
+    // Setup jobs for executing queries
+    $jobConfig = $this->bigQuery->query($query_statement);
+    $rows_data = $this->bigQuery->runQuery($jobConfig);
+    foreach ($rows_data as $row) {
+      return $row['total_result'];
+    }
+    return 0;
   }
 
   /**

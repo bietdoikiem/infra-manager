@@ -55,6 +55,9 @@ switch ($routeInfo[0]) {
     $handler = $routeInfo[1];
     $vars = ($httpMethod == 'POST') ? array_map([App\Utils\FilterUtils::class, 'mask_empty'], $_POST) : $routeInfo[2];
     list($class, $method) = explode("/", $handler, 2);
+    if (isset($_GET['page']) && isset($_GET['size'])) {
+      $vars = $_GET;
+    }
     ServerLogger::log("=> Route Vars:", $vars);
     call_user_func_array(array($container->get($class), $method), (new NamedArgumentsResolver([$container->get($class), $method]))->resolve($vars));
     break;

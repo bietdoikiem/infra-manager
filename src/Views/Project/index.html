@@ -5,21 +5,44 @@ endblock %} {% block body %}
 <div id="inner-project-content">
 	<!-- Table -->
 	<!-- Button trigger modal -->
-	<div class="table-actions mb-2" style="display: flex">
+	<div class="table-actions mb-3" style="display: flex">
 		<h3 style="margin-right: auto">List of Projects</h3>
-		<button
-			type="button"
-			class="btn btn-primary"
-			data-toggle="modal"
-			data-target="#addModal"
-			style="margin-left: auto"
-		>
-			<i class="fas fa-plus"></i>
-			Add
-		</button>
+		<div class="right-menu-wrapper" style="margin-left: auto">
+			<div class="input-group" style="width: 500px; display: inline-flex">
+				<input
+					id="search-project-name"
+					type="text"
+					class="form-control shadow-none"
+					onfocus="this.placeholder = ''"
+					onblur="this.placeholder = 'Enter project name'"
+					placeholder="Enter project name"
+					aria-label="Project name"
+					aria-describedby="basic-addon1"
+				/>
+				<div class="input-group-append" style="width: 200px">
+					{% include "Project/search_country_dropdown.html" %}
+				</div>
+				<div class="input-group-append">
+					<a class="search-project-link" href="#">
+						<span class="input-group-text page-link" id="page-navigate"
+							><i class="fas fa-search text-grey" aria-hidden="true"></i></span
+					></a>
+				</div>
+			</div>
+			<button
+				type="button"
+				class="btn btn-primary"
+				data-toggle="modal"
+				data-target="#addModal"
+				style="display: inline-block"
+			>
+				<i class="fas fa-plus"></i>
+				Add
+			</button>
+		</div>
 	</div>
-	<div style="overflow-x: auto">
-		<table class="table">
+	<div style="overflow-x: auto; overflow-y: auto; max-height: 100vh">
+		<table id="project-table" class="table">
 			<thead class="thead-light">
 				<tr>
 					<th class="sticky-col first-col-header" scope="col">ID</th>
@@ -137,12 +160,12 @@ endblock %} {% block body %}
 		<nav aria-label="Pagination">
 			<ul class="pagination">
 				<li class="page-item">
-					<a class="page-link" href="#" aria-label="Previous">
+					<a class="first-page-link page-link" href="#" aria-label="Previous">
 						<span aria-hidden="true">&laquo; First</span>
 					</a>
 				</li>
 				<li class="page-item">
-					<a class="page-link" href="#" aria-label="Previous">
+					<a class="previous-link page-link" href="#" aria-label="Previous">
 						<span aria-hidden="true">&laquo;</span>
 						<span class="sr-only">Previous</span>
 					</a>
@@ -150,16 +173,56 @@ endblock %} {% block body %}
 				<li class="page-item">
 					<div
 						class="input-group md-form form-sm form-2 pl-0"
-						style="width: 100px"
+						style="width: 180px"
 					>
+						<!-- HIDDEN variables of Twig -->
+						<input
+							type="hidden"
+							class="form-control"
+							id="total-result"
+							name="total_result"
+							required
+							value="{{ total_result }}"
+						/>
+						<input
+							type="hidden"
+							class="form-control"
+							id="count-project-list"
+							name="total_result"
+							required
+							value="{{ count_project_list }}"
+						/>
+						<input
+							type="hidden"
+							class="form-control"
+							id="last-page"
+							name="total_result"
+							required
+							value="{{ last_page }}"
+						/>
+						<!-- Input actual values! -->
 						<input
 							id="go-to-page"
 							class="form-control shadow-none"
 							type="number"
 							aria-label="go-to-page"
+							min="1"
 						/>
+						<select
+							id="go-to-page-size"
+							class="form-control shadow-none"
+							aria-label="go-to-page"
+							style="width: 30px"
+						>
+							<option selected>10</option>
+							<option>20</option>
+							<option>30</option>
+							<option>40</option>
+							<option>50</option>
+							<option>100</option>
+						</select>
 						<div class="input-group-append">
-							<a href="/projects?page=1">
+							<a class="search-page-link" href="#">
 								<span class="input-group-text page-link" id="page-navigate"
 									><i
 										class="fas fa-search text-grey"
@@ -170,19 +233,24 @@ endblock %} {% block body %}
 					</div>
 				</li>
 				<li class="page-item">
-					<a class="page-link" href="#" aria-label="Next">
+					<a class="next-link page-link" href="#" aria-label="Next">
 						<span aria-hidden="true">&raquo;</span>
 						<span class="sr-only">Next</span>
 					</a>
 				</li>
 				<li class="page-item">
-					<a class="page-link" href="#" aria-label="Previous">
+					<a class="last-page-link page-link" href="#" aria-label="Previous">
 						<span aria-hidden="true">Last &raquo;</span>
 					</a>
 				</li>
 			</ul>
 		</nav>
+		<p id="page-indicator"></p>
 	</div>
+	<!-- Add modal included here -->
+	{% include "Project/add_modal.html" %}
+	<!-- Edit modal -->
+	{% include "Project/edit_modal.html" %}
 
 	<script>
 		$(document).ready(function (e) {
@@ -192,12 +260,93 @@ endblock %} {% block body %}
 				);
 				return c; //you can just return c because it will be true or false
 			});
+			/* Get Query parameters */
+			const urlSearchParams = new URLSearchParams(window.location.search);
+			const params = Object.fromEntries(urlSearchParams.entries());
+			let page =
+				params["page"] || typeof person === "number"
+					? parseInt(params["page"], 10)
+					: 1;
+			let size =
+				params["size"] || typeof params["size"] === "number"
+					? parseInt(params["size"], 10)
+					: 10;
+			const total_result = $("#total-result").val();
+			const count_project_list = $("#count-project-list").val();
+			/* Calculate last and first page */
+			var last_page = get_last_page(total_result, size);
+			$("#go-to-page").val(page);
+			$("#go-to-page-size").val(size);
+			$("#page-indicator").html(
+				`Showing <b>${count_project_list}</b> entries out of total ${total_result} entries`
+			);
+			/* Setup Next and Previous Link and ... Other links as well! */
+			if (page == last_page || count_project_list == 0) {
+				$(".next-link").parent().addClass("disabled");
+			} else if (page == 1) {
+				$(".previous-link").parent().addClass("disabled");
+			}
+			$(".previous-link").attr(
+				"href",
+				`/projects?page=${page - 1}&size=${size}`
+			);
+			$(".next-link").attr("href", `/projects?page=${page + 1}&size=${size}`);
+			$(".first-page-link").attr("href", `/projects?page=1&size=${size}`);
+			$(".last-page-link").attr(
+				"href",
+				`/projects?page=${last_page}&size=${size}`
+			);
+			/* Prepare and Parse value for search option on pagination */
+			$(".search-page-link").click(function (e) {
+				let go_to_page = parseInt($("#go-to-page").val(), 10);
+				let go_to_page_size = parseInt($("#go-to-page-size").val(), 10);
+
+				$(".search-page-link").attr(
+					"href",
+					`/projects?page=${go_to_page}&size=${go_to_page_size}`
+				);
+			});
+			/* Bind change handler to page and size input */
+			$("#go-to-page, #go-to-page-size").change(function (e) {
+				let page = parseInt($("#go-to-page").val(), 10);
+				let size = parseInt($("#go-to-page-size").val(), 10);
+				var last_page = get_last_page(total_result, size);
+				$("#go-to-page").val(page);
+				$("#go-to-page-size").val(size);
+				$(".previous-link").attr(
+					"href",
+					`/projects?page=${page - 1}&size=${size}`
+				);
+				$(".next-link").attr("href", `/projects?page=${page + 1}&size=${size}`);
+				$(".first-page-link").attr("href", `/projects?page=1&size=${size}`);
+				$(".last-page-link").attr(
+					"href",
+					`/projects?page=${last_page}&size=${size}`
+				);
+			});
+			/* Handle min max */
+			$('input[type="number"]').on("keyup", function () {
+				v = parseInt($(this).val());
+				min = parseInt($(this).attr("min"));
+				max = parseInt($(this).attr("max"));
+
+				if (v < min) {
+					$(this).val(min);
+				} else if (v > max) {
+					$(this).val(max);
+				}
+			});
 		});
+		function get_last_page(total_result, size) {
+			let modulo_last_page = total_result % size;
+			if (modulo_last_page > 0) {
+				var last_page = parseInt(total_result / size, 10) + 1;
+			} else {
+				var last_page = parseInt(total_result / size, 10);
+			}
+			return last_page;
+		}
 	</script>
-	<!-- Add modal included here -->
-	{% include "Project/add_modal.html" %}
-	<!-- Edit modal -->
-	{% include "Project/edit_modal.html" %}
 </div>
 
 {% endblock %}
