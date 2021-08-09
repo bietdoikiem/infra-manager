@@ -324,3 +324,11 @@ input[type="number"] {
 	text-decoration: none;
 	color: #999;
 }
+
+.big-number {
+	text-align: center;
+}
+
+.count {
+	font-size: 84px;
+}

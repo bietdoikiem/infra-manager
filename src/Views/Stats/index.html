@@ -1,0 +1,120 @@
+{% extends "base.html" %} {% block title %}Statistics {% endblock %} {% block
+header_title %} Statistics {% endblock %} {% block breadcrumb %} Statistics {%
+endblock %} {% block body %}
+
+<div id="inner-project-content">
+	<!-- Table -->
+	<!-- Button trigger modal -->
+	<div class="table-actions mb-3" style="display: flex">
+		<h3 style="margin-right: auto">List of Projects</h3>
+		<div class="right-menu-wrapper" style="margin-left: auto">
+			<button
+				type="button"
+				class="btn btn-primary"
+				data-toggle="modal"
+				data-target="#addModal"
+				style="display: inline-block"
+			>
+				<i class="fas fa-plus"></i>
+				Add
+			</button>
+		</div>
+	</div>
+	<div class="chart-wrapper">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="big-number"><span class="count">3000000</span></div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="chart-content">
+					<canvas id="bar-chart" height="100" width="100"></canvas>
+				</div>
+			</div>
+			<div class="col-md-6">
+				<div class="chart-content">
+					<canvas id="doughnut-chart" height="100" width="100"></canvas>
+				</div>
+			</div>
+		</div>
+	</div>
+	{#
+	<!-- Add modal included here -->
+	{% include "Project/add_modal.html" %}
+	<!-- Edit modal -->
+	{% include "Project/edit_modal.html" %} #}
+
+	<!-- jQuery scripts -->
+	<script>
+		$(document).ready(function (e) {
+			$(".count").each(function () {
+				$(this)
+					.prop("Counter", 0)
+					.animate(
+						{
+							Counter: $(this).text(),
+						},
+						{
+							duration: 4000,
+							easing: "swing",
+							step: function (now) {
+								$(this).text(Math.ceil(now));
+							},
+						}
+					);
+			});
+		});
+	</script>
+	<!-- Chart script -->
+	<script>
+		/* Line Chart */
+		const labels = ["January", "February", "March", "April", "May", "June"];
+		const data = {
+			labels: labels,
+			datasets: [
+				{
+					label: "My First dataset",
+					backgroundColor: "rgb(255, 99, 132)",
+					borderColor: "rgb(255, 99, 132)",
+					data: [0, 10, 5, 2, 20, 30, 45],
+				},
+			],
+		};
+		const config = {
+			type: "line",
+			data,
+			options: {},
+		};
+		var myChart = new Chart(document.getElementById("bar-chart"), config);
+		/* Doughnut Chart */
+		new Chart(document.getElementById("doughnut-chart"), {
+			type: "doughnut",
+			data: {
+				labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+				datasets: [
+					{
+						label: "Population (millions)",
+						backgroundColor: [
+							"#3e95cd",
+							"#8e5ea2",
+							"#3cba9f",
+							"#e8c3b9",
+							"#c45850",
+						],
+						data: [2478, 5267, 734, 784, 433],
+					},
+				],
+			},
+			options: {
+				title: {
+					display: true,
+					text: "Predicted world population (millions) in 2050",
+				},
+			},
+		});
+	</script>
+</div>
+
+{% endblock %}

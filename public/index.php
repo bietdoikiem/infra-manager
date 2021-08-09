@@ -18,13 +18,17 @@ if (!defined('STDOUT')) define('STDOUT', fopen('php://stdout', 'wb'));
 if (!defined('STDERR')) define('STDERR', fopen('php://stderr', 'wb'));
 
 $dispatcher = FastRoute\simpleDispatcher(function (FastRoute\RouteCollector $r) {
+  /* Project page */
   $r->addRoute('GET', '/', 'App\Controllers\ProjectController/index');
   $r->addRoute('GET', '/projects', 'App\Controllers\ProjectController/index');
-  $r->addRoute('GET', '/bigquery', 'App\Controllers\ProjectController/bigquery_index');
-  $r->addRoute('GET', '/bigquery/search', 'App\Controllers\ProjectController/search');
   $r->addRoute('POST', '/projects/add', 'App\Controllers\ProjectController/add');
   $r->addRoute('POST', '/projects/edit', 'App\Controllers\ProjectController/edit');
   $r->addRoute('POST', '/projects/delete', 'App\Controllers\ProjectController/delete');
+  /* BigQuery page */
+  $r->addRoute('GET', '/bigquery', 'App\Controllers\ProjectController/bigquery_index');
+  $r->addRoute('GET', '/bigquery/search', 'App\Controllers\ProjectController/search');
+  /* Statistics page */
+  $r->addRoute('GET', '/stats', 'App\Controllers\StatsController/index');
 });
 
 $container = new DI\Container();

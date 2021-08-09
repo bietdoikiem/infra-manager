@@ -23,7 +23,8 @@
 		"psr/cache": "1.0.1",
 		"rybakit/arguments-resolver": "^0.6.2",
 		"google/cloud-bigquery": "^1.22",
-		"vlucas/phpdotenv": "^5.3"
+		"vlucas/phpdotenv": "^5.3",
+		"spatie/async": "^1.5"
 	},
 	"scripts": {
 		"start": [
