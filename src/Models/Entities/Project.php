@@ -75,7 +75,7 @@ class Project {
     $this->country_list_of_lender_financier = $country_list_of_lender_financier == "" ? NULL : $country_list_of_lender_financier;
     $this->lender_financier_company = $lender_financier_company == "" ? NULL : $lender_financier_company;
     $this->country_list_of_construction_epc = $country_list_of_construction_epc == "" ? NULL : $country_list_of_construction_epc;
-    $this->construction_company_epc_participant = $construction_company_epc_participant == "" ? NULL : $country_list_of_construction_epc;
+    $this->construction_company_epc_participant = $construction_company_epc_participant == "" ? NULL : $construction_company_epc_participant;
     $this->country = $country; // Required!
     $this->province_state = $province_state; // Required!
     $this->district = $district; // Required!

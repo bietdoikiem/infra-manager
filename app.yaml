@@ -4,11 +4,11 @@ env_variables:
   DEPLOY_URL: "https://crafty-coral-281804.uc.r.appspot.com"
 
 handlers:
-  - url: /(.*\.(gif|png|jpg|css|js))$
+  - url: /(.*\.(gif|png|jpg|css|js|ico))$
     static_files: public/\1
-    upload: public/.*\.(gif|png|jpg|css|js)$
+    upload: public/.*\.(gif|png|jpg|css|js|ico)$
 
-  - url: public/favicon.ico
+  - url: /public/favicon.ico
     static_files: public/favicon.ico
     upload: public/favicon.ico
 

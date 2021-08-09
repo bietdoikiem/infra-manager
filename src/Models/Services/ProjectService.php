@@ -49,7 +49,8 @@ class ProjectService {
       $project[16] = MathUtils::makeFloat($project[16]);
       $project[17] = MathUtils::makeFloat($project[17]);
       $project[19] = MathUtils::makeFloat($project[19]);
-      $project_obj = new Project(...$project);
+      $values = array_values($project);
+      $project_obj = new Project(...$values);
       array_push($project_list, $project_obj);
     }
     // Aggregate return results
@@ -87,7 +88,8 @@ class ProjectService {
       $project[$idx[16]] = MathUtils::makeFloat($project[$idx[16]]);
       $project[$idx[17]] = MathUtils::makeFloat($project[$idx[17]]);
       $project[$idx[19]] = MathUtils::makeFloat($project[$idx[19]]);
-      $project_obj = new Project(...$project);
+      $values = array_values($project);
+      $project_obj = new Project(...$values);
       array_push($project_list, $project_obj);
     }
     /* Calculate total query results */
@@ -141,7 +143,8 @@ class ProjectService {
       $project[$idx[16]] = MathUtils::makeFloat($project[$idx[16]]);
       $project[$idx[17]] = MathUtils::makeFloat($project[$idx[17]]);
       $project[$idx[19]] = MathUtils::makeFloat($project[$idx[19]]);
-      $project_obj = new Project(...$project);
+      $values = array_values($project);
+      $project_obj = new Project(...$values);
       array_push($project_list, $project_obj);
     }
     /* Calculate total query results */
