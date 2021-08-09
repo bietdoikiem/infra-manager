@@ -278,6 +278,16 @@ endblock %} {% block body %}
 				"href",
 				`/projects?page=${last_page}&size=${size}`
 			);
+			/* Prepare and Parse value for search option on pagination */
+			$(".search-page-link").click(function (e) {
+				let go_to_page = parseInt($("#go-to-page").val(), 10);
+				let go_to_page_size = parseInt($("#go-to-page-size").val(), 10);
+
+				$(".search-page-link").attr(
+					"href",
+					`/bigquery?page=${go_to_page}&size=${go_to_page_size}`
+				);
+			});
 			/* Bind change handler to page and size input */
 			$("#go-to-page, #go-to-page-size").change(function (e) {
 				let page = parseInt($("#go-to-page").val(), 10);

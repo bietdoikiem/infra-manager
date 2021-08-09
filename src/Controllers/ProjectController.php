@@ -17,10 +17,14 @@ class ProjectController {
 
   /**
    * Index page
+   * 
+   * @param int $size Size of the page
+   * @param int $page Page no.
+   * @return void
    */
   public function index(int $size = 10, int $page = 1) {
     // Read all projects
-    $result = $this->projectService->read_projects_bigquery($size, $page);
+    $result = $this->projectService->read_all_projects($size, $page);
     $project_list = $result[0];
     $count_project_list = count($project_list);
     $total_result = $result[1];
@@ -54,7 +58,13 @@ class ProjectController {
   }
 
   /**
-   * Index page
+   * Search Index page
+   * 
+   * @param string $keyword Keyword/Project's name to search for
+   * @param string $country Country's name to search for
+   * @param int $size Size of the page
+   * @param int $page Page number
+   * @return void
    */
   public function search(string $keyword = "", string $country = "", int $size = 10, int $page = 1) {
     // Read all projects
@@ -70,6 +80,13 @@ class ProjectController {
     ]);
   }
 
+  /**
+   * Controller for adding a project to project.csv
+   * 
+   * @param int $project_name Name of the added project
+   * ... more info
+   * @return void
+   */
   public function add(
     string $project_name,
     string $subtype,
@@ -96,6 +113,7 @@ class ProjectController {
     ?string $latest_update
   ) {
     ServerLogger::log("Form posted (project's name): " . $project_name);
+    ServerLogger::log("Date: ", $latest_update);
     $result = $this->projectService->add_project(
       $project_name,
       $subtype,
@@ -132,6 +150,13 @@ class ProjectController {
     exit;
   }
 
+  /**
+   * Controller for editing a project in project.csv
+   * 
+   * @param int $id Identifier of row
+   * ... more info
+   * @return void
+   */
   public function edit(
     int $id,
     string $project_name,
@@ -171,6 +196,12 @@ class ProjectController {
     exit;
   }
 
+  /**
+   * Controller for deleting a project in project.csv
+   * 
+   * @param int $id Identifier of the row
+   * @return void
+   */
   public function delete(
     int $id
   ) {

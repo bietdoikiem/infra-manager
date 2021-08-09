@@ -8,6 +8,7 @@ use App\Utils\BucketConfig;
 use App\Utils\ServerLogger;
 use App\Utils\MathUtils;
 use Google\Cloud\BigQuery\BigQueryClient;
+use App\Utils\DateUtils;
 
 class ProjectService {
   public $storage;
@@ -28,14 +29,20 @@ class ProjectService {
   }
 
   /**
-   * Read all Projects in project.csv
-   * 
-   * @return Project[] $project_list -> List of projects
+   * Read all Projects in project.csv in pagination style!
+   * @param int $size Page size for query
+   * @param int $page Page number for query 
+   * @return array [0] -> Project list; [1] -> Total results of query
    */
-  public function read_all_projects(): array {
+  public function read_all_projects(int $size = 10, int $page = 1): array {
     $project_list = array();
+    $total_offset = ($page - 1) * $size;
     $rows_data = $this->read_bucket_csv(BucketConfig::BUCKET_NAME, BucketConfig::PROJECT_FILE, true);
-    foreach ($rows_data as &$project) {
+    // Calculate total rows in CSV file
+    $total_rows = count($rows_data);
+    // Slice array pagination
+    $rows_data_sliced = array_slice($rows_data, $total_offset, $size);
+    foreach ($rows_data_sliced as &$project) {
       $project[0] = MathUtils::makeInteger($project[0]); // Convert id to int
       $project[4] = MathUtils::makeFloat($project[4]); // Convert capacity to float
       $project[5] = MathUtils::makeInteger($project[5]);
@@ -45,7 +52,9 @@ class ProjectService {
       $project_obj = new Project(...$project);
       array_push($project_list, $project_obj);
     }
-    return $project_list;
+    // Aggregate return results
+    $return_results = array($project_list, $total_rows);
+    return $return_results;
   }
 
   /**
@@ -227,31 +236,14 @@ class ProjectService {
     $last_id = $this->read_bucket_file(BucketConfig::BUCKET_NAME, BucketConfig::LAST_ID_FILE);
     $insert_id = $last_id + 1; // Increment for new inserted one's id
     ServerLogger::log("=> Performing inserting new employee to CSV file!");
+    $list_of_args = func_get_args();
+    if ($list_of_args[22]) {
+      $parse_date = DateUtils::string_to_date($list_of_args[22]);
+      $list_of_args[22] = DateUtils::date_to_string($parse_date);
+    }
     // Insert new data
     $insert_row = array(
-      $insert_id, $project_name,
-      $subtype,
-      $current_status,
-      $capacity_mw,
-      $year_of_completion,
-      $country_list_of_sponsor_developer,
-      $sponsor_developer_company,
-      $country_list_of_lender_financier,
-      $lender_financier_company,
-      $country_list_of_construction_epc,
-      $construction_company_epc_participant,
-      $country,
-      $province_state,
-      $district,
-      $tributary,
-      $latitude,
-      $longitude,
-      $proximity,
-      $avg_annual_output_mwh,
-      $data_source,
-      $announce_more_information,
-      $link,
-      $latest_update
+      $insert_id, ...$list_of_args
     );
     ServerLogger::log("=> Insert Array: ", $insert_row);
     $result = $this->insert_bucket_csv($insert_row, BucketConfig::BUCKET_NAME, BucketConfig::PROJECT_FILE);
@@ -302,6 +294,9 @@ class ProjectService {
     $rows_data = $this->read_bucket_csv(BucketConfig::BUCKET_NAME, BucketConfig::PROJECT_FILE, false);
     ServerLogger::log("=> Performing editing new project to CSV file!");
     $list_of_args = func_get_args();
+    // Pre-process date before editing
+    $parse_date = DateUtils::string_to_date($list_of_args[23]);
+    $list_of_args[23] = DateUtils::date_to_string($parse_date);
     foreach ($rows_data as &$project) {
       if ($project[0] == $id) {
         for ($i = 1; $i < count($project); $i++) {
@@ -313,7 +308,7 @@ class ProjectService {
     $result = $this->write_bucket_csv_multiple($rows_data, BucketConfig::BUCKET_NAME, BucketConfig::PROJECT_FILE);
     // Construct Project object to return
     if ($result) {
-      $edited_project = new Project(...func_get_args());
+      $edited_project = new Project(...$list_of_args);
       return $edited_project;
     }
     return null;
@@ -459,7 +454,7 @@ class ProjectService {
     // Open a stream in read-only mode
     if ($stream = fopen($uri, "r")) {
       while (!feof($stream)) {
-        for ($i = 0; $row = fgetcsv($stream, 10000, ","); ++$i) {
+        for ($i = 0; $row = fgetcsv($stream); ++$i) {
           /* Skip header switch */
           if ($skip_header == False) {
             array_push($row_list, $row);
@@ -487,7 +482,7 @@ class ProjectService {
     // Open a stream in read-only mode
     if ($stream = fopen($uri, "r")) {
       while (!feof($stream)) {
-        $read_str = fread($stream, 1024);
+        $read_str = fread($stream, filesize($uri));
       }
     }
     fclose($stream);
@@ -503,6 +498,7 @@ class ProjectService {
    * @return bool
    */
   public function write_file(string $data, string $uri, int $byte_length = 1024): bool {
+    $byte_length = filesize($uri);
     // Open a stream in read-only mode
     if ($stream = fopen($uri, "w")) {
       $result = fwrite($stream, $data, $byte_length);
@@ -558,7 +554,7 @@ class ProjectService {
     $temp = tempnam(sys_get_temp_dir(), 'TMP_');
     $temp_stream = fopen($temp, "w");
     if ($stream = fopen($uri, "r")) {
-      while (($row = fgetcsv($stream, 1000)) !== false) {
+      while (($row = fgetcsv($stream)) !== false) {
         if (reset($row) == $identifier) {
           continue;
         }
@@ -567,6 +563,7 @@ class ProjectService {
     } else {
       return false;
     }
+    /* Close the read stream */
     fclose($temp_stream);
     fclose($stream);
     file_put_contents($uri, file_get_contents($temp));
