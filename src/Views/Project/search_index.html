@@ -1,15 +1,23 @@
-{% extends "base.html" %} {% block title %}Projects - Search {% endblock %} {%
-block header_title %} Search Results {% endblock %} {% block breadcrumb %}
-Projects > Search {% endblock %} {% block body %}
+{% extends "base.html" %} {% block title %}BigQuery {% endblock %} {% block
+header_title %} Search Results {% endblock %} {% block breadcrumb %}
+<a href="/bigquery" class="breadcrumb-link">BigQuery </a>
+<span style="color: #999">></span> Search {% endblock %} {% block body %}
 
 <div id="inner-project-content">
 	<!-- Table -->
 	<!-- Button trigger modal -->
 	<div class="table-actions mb-3" style="display: flex">
-		<h3 style="margin-right: auto">Search Results</h3>
+		<h3 class="search-result-header" style="margin-right: auto">
+			Search Results:
+		</h3>
 		<div class="right-menu-wrapper" style="margin-left: auto">
 			<div class="input-group" style="width: 500px; display: inline-flex">
-				<form id="search-form" action="/projects/search" method="get">
+				<form
+					id="search-form"
+					action="/bigquery/search"
+					method="get"
+					style="display: inline-flex"
+				>
 					<input
 						id="search-project-name"
 						type="text"
@@ -20,6 +28,7 @@ Projects > Search {% endblock %} {% block body %}
 						aria-label="Project name"
 						aria-describedby="basic-addon1"
 						name="keyword"
+						style="width: 250px"
 					/>
 					<div class="input-group-append" style="width: 200px">
 						{% include "Project/search_country_dropdown.html" %}
@@ -75,7 +84,9 @@ Projects > Search {% endblock %} {% block body %}
 					<th scope="col">Announce more information</th>
 					<th scope="col">Link</th>
 					<th scope="col">Latest update</th>
+					{#
 					<th scope="col" style="color: transparent">Edit/Delete</th>
+					#}
 				</tr>
 			</thead>
 			<tbody>
@@ -105,6 +116,7 @@ Projects > Search {% endblock %} {% block body %}
 					<td>{{ project.announce_more_information ?? "N/A" }}</td>
 					<td>{{ project.link ?? "N/A" }}</td>
 					<td>{{ project.latest_update ?? "N/A" }}</td>
+					{#
 					<td>
 						<form
 							action="/projects/delete"
@@ -156,6 +168,7 @@ Projects > Search {% endblock %} {% block body %}
 							<i class="fas fa-edit" style></i>
 						</button>
 					</td>
+					#}
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -260,58 +273,77 @@ Projects > Search {% endblock %} {% block body %}
 
 	<script>
 		$(document).ready(function (e) {
-			$(".delete-form").submit(function () {
-				var c = confirm(
-					"Do you want to delete this Project? Click OK to continue!"
-				);
-				return c; //you can just return c because it will be true or false
-			});
 			/* Get Query parameters */
 			const urlSearchParams = new URLSearchParams(window.location.search);
 			const params = Object.fromEntries(urlSearchParams.entries());
 			let page =
-				params["page"] || typeof person === "number"
+				params["page"] || typeof person == "number"
 					? parseInt(params["page"], 10)
 					: 1;
 			let size =
-				params["size"] || typeof params["size"] === "number"
+				params["size"] || typeof params["size"] == "number"
 					? parseInt(params["size"], 10)
 					: 10;
+			/* Parse value from search query */
+			let search_project_name =
+				params["keyword"] && typeof params["keyword"] !== undefined
+					? params["keyword"]
+					: "";
+			let search_project_country =
+				params["country"] && typeof params["country"] !== undefined
+					? params["country"]
+					: "";
 			const total_result = $("#total-result").val();
 			const count_project_list = $("#count-project-list").val();
+			console.log(count_project_list);
+			/* Display header result */
+			$(".search-result-header").html(
+				`Search Results: '${search_project_name}'`
+			);
 			/* Calculate last and first page */
 			var last_page = get_last_page(total_result, size);
+			/* Setup navigation links according to page, size */
 			$("#go-to-page").val(page);
 			$("#go-to-page-size").val(size);
 			$("#page-indicator").html(
 				`Showing <b>${count_project_list}</b> entries out of total ${total_result} entries`
 			);
-			/* Setup Next and Previous Link and ... Other links as well! */
-			if (page == last_page || count_project_list == 0) {
+			/* Disabled and enabled attribute for Next/Previous navigation */
+			if (page == last_page && count_project_list <= size) {
 				$(".next-link").parent().addClass("disabled");
-			} else if (page == 1) {
+			}
+			if (page == 1 && last_page == 1) {
 				$(".previous-link").parent().addClass("disabled");
 			}
+			/* Setup Next and Previous Link and ... Other links as well! */
 			$(".previous-link").attr(
 				"href",
-				`/projects?page=${page - 1}&size=${size}`
+				`/bigquery/search?keyword=${search_project_name}&country=${search_project_country}&page=${
+					page - 1
+				}&size=${size}`
 			);
-			$(".next-link").attr("href", `/projects?page=${page + 1}&size=${size}`);
-			$(".first-page-link").attr("href", `/projects?page=1&size=${size}`);
+			$(".next-link").attr(
+				"href",
+				`/bigquery/search?keyword=${search_project_name}&country=${search_project_country}&page=${
+					page + 1
+				}&size=${size}`
+			);
+			$(".first-page-link").attr("href", `/bigquery?page=1&size=${size}`);
 			$(".last-page-link").attr(
 				"href",
-				`/projects?page=${last_page}&size=${size}`
+				`/bigquery/search?keyword=${search_project_name}&country=${search_project_country}&page=${last_page}&size=${size}`
 			);
 			/* Prepare and Parse value for search option on pagination */
 			$(".search-page-link").click(function (e) {
 				let go_to_page = parseInt($("#go-to-page").val(), 10);
 				let go_to_page_size = parseInt($("#go-to-page-size").val(), 10);
-
 				$(".search-page-link").attr(
 					"href",
-					`/projects?page=${go_to_page}&size=${go_to_page_size}`
+					`/bigquery/search?keyword=${search_project_name}&country=${search_project_country}&page=${go_to_page}&size=${go_to_page_size}`
 				);
 			});
+			$("#search-project-name").val(search_project_name);
+			$("#search-project-country").val(search_project_country);
 			/* Bind change handler to page and size input */
 			$("#go-to-page, #go-to-page-size").change(function (e) {
 				let page = parseInt($("#go-to-page").val(), 10);
@@ -321,13 +353,23 @@ Projects > Search {% endblock %} {% block body %}
 				$("#go-to-page-size").val(size);
 				$(".previous-link").attr(
 					"href",
-					`/projects?page=${page - 1}&size=${size}`
+					`/bigquery/search?keyword=${search_project_name}&country=${search_project_country}&page=${
+						page - 1
+					}&size=${size}`
 				);
-				$(".next-link").attr("href", `/projects?page=${page + 1}&size=${size}`);
-				$(".first-page-link").attr("href", `/projects?page=1&size=${size}`);
+				$(".next-link").attr(
+					"href",
+					`/bigquery/search?keyword=${search_project_name}&country=${search_project_country}&page=${
+						page + 1
+					}&size=${size}`
+				);
+				$(".first-page-link").attr(
+					"href",
+					`/bigquery/search?keyword=${search_project_name}&country=${search_project_country}&page=1&size=${size}`
+				);
 				$(".last-page-link").attr(
 					"href",
-					`/projects?page=${last_page}&size=${size}`
+					`/bigquery/search?keyword=${search_project_name}&country=${search_project_country}&page=${last_page}&size=${size}`
 				);
 			});
 			/* Handle min max */
@@ -349,6 +391,9 @@ Projects > Search {% endblock %} {% block body %}
 				return false;
 			});
 		});
+
+		/* Separate function to get the last page of total results */
+
 		function get_last_page(total_result, size) {
 			let modulo_last_page = total_result % size;
 			if (modulo_last_page > 0) {

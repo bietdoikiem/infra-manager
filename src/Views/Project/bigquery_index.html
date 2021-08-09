@@ -1,13 +1,46 @@
-{% extends "base.html" %} {% block title %}Projects {% endblock %} {% block
-header_title %} Projects {% endblock %} {% block breadcrumb %} Projects {%
+{% extends "base.html" %} {% block title %}BigQuery {% endblock %} {% block
+header_title %} BigQuery {% endblock %} {% block breadcrumb %} BigQuery {%
 endblock %} {% block body %}
 
 <div id="inner-project-content">
 	<!-- Table -->
 	<!-- Button trigger modal -->
 	<div class="table-actions mb-3" style="display: flex">
-		<h3 style="margin-right: auto">List of Projects</h3>
+		<h3 style="margin-right: auto">Projects in BigQuery</h3>
 		<div class="right-menu-wrapper" style="margin-left: auto">
+			<div class="input-group" style="width: 500px; display: inline-flex">
+				<form
+					id="search-form"
+					action="/bigquery/search"
+					method="get"
+					style="display: inline-flex"
+				>
+					<input
+						id="search-project-name"
+						type="text"
+						class="form-control shadow-none"
+						onfocus="this.placeholder = ''"
+						onblur="this.placeholder = 'Enter project name'"
+						placeholder="Enter project name"
+						aria-label="Project name"
+						aria-describedby="basic-addon1"
+						name="keyword"
+						style="width: 250px"
+					/>
+					<div class="input-group-append" style="width: 200px">
+						{% include "Project/search_country_dropdown.html" %}
+					</div>
+					<div class="input-group-append">
+						<a class="search-project-link" href="#">
+							<span class="input-group-text page-link" id="page-navigate"
+								><i
+									class="fas fa-search text-grey"
+									aria-hidden="true"
+								></i></span
+						></a>
+					</div>
+				</form>
+			</div>
 			<button
 				type="button"
 				class="btn btn-primary"
@@ -48,7 +81,9 @@ endblock %} {% block body %}
 					<th scope="col">Announce more information</th>
 					<th scope="col">Link</th>
 					<th scope="col">Latest update</th>
+					{#
 					<th scope="col" style="color: transparent">Edit/Delete</th>
+					#}
 				</tr>
 			</thead>
 			<tbody>
@@ -78,6 +113,7 @@ endblock %} {% block body %}
 					<td>{{ project.announce_more_information ?? "N/A" }}</td>
 					<td>{{ project.link ?? "N/A" }}</td>
 					<td>{{ project.latest_update ?? "N/A" }}</td>
+					{#
 					<td>
 						<form
 							action="/projects/delete"
@@ -129,6 +165,7 @@ endblock %} {% block body %}
 							<i class="fas fa-edit" style></i>
 						</button>
 					</td>
+					#}
 				</tr>
 				{% endfor %}
 			</tbody>
@@ -233,12 +270,6 @@ endblock %} {% block body %}
 
 	<script>
 		$(document).ready(function (e) {
-			$(".delete-form").submit(function () {
-				var c = confirm(
-					"Do you want to delete this Project? Click OK to continue!"
-				);
-				return c; //you can just return c because it will be true or false
-			});
 			/* Get Query parameters */
 			const urlSearchParams = new URLSearchParams(window.location.search);
 			const params = Object.fromEntries(urlSearchParams.entries());
@@ -270,14 +301,24 @@ endblock %} {% block body %}
 
 			$(".previous-link").attr(
 				"href",
-				`/projects?page=${page - 1}&size=${size}`
+				`/bigquery?page=${page - 1}&size=${size}`
 			);
-			$(".next-link").attr("href", `/projects?page=${page + 1}&size=${size}`);
-			$(".first-page-link").attr("href", `/projects?page=1&size=${size}`);
+			$(".next-link").attr("href", `/bigquery?page=${page + 1}&size=${size}`);
+			$(".first-page-link").attr("href", `/bigquery?page=1&size=${size}`);
 			$(".last-page-link").attr(
 				"href",
-				`/projects?page=${last_page}&size=${size}`
+				`/bigquery?page=${last_page}&size=${size}`
 			);
+			/* Prepare and Parse value for search option on pagination */
+			$(".search-page-link").click(function (e) {
+				let go_to_page = parseInt($("#go-to-page").val(), 10);
+				let go_to_page_size = parseInt($("#go-to-page-size").val(), 10);
+
+				$(".search-page-link").attr(
+					"href",
+					`/bigquery?page=${go_to_page}&size=${go_to_page_size}`
+				);
+			});
 			/* Bind change handler to page and size input */
 			$("#go-to-page, #go-to-page-size").change(function (e) {
 				let page = parseInt($("#go-to-page").val(), 10);
@@ -287,14 +328,19 @@ endblock %} {% block body %}
 				$("#go-to-page-size").val(size);
 				$(".previous-link").attr(
 					"href",
-					`/projects?page=${page - 1}&size=${size}`
+					`/bigquery?page=${page - 1}&size=${size}`
 				);
-				$(".next-link").attr("href", `/projects?page=${page + 1}&size=${size}`);
-				$(".first-page-link").attr("href", `/projects?page=1&size=${size}`);
+				$(".next-link").attr("href", `/bigquery?page=${page + 1}&size=${size}`);
+				$(".first-page-link").attr("href", `/bigquery?page=1&size=${size}`);
 				$(".last-page-link").attr(
 					"href",
-					`/projects?page=${last_page}&size=${size}`
+					`/bigquery?page=${last_page}&size=${size}`
 				);
+				/* Fake form for search function */
+				$(".search-project-link").click(function (e) {
+					e.preventDefault();
+					$("#search-form").submit();
+				});
 			});
 			/* Handle min max */
 			$('input[type="number"]').on("keyup", function () {
@@ -308,6 +354,12 @@ endblock %} {% block body %}
 					$(this).val(max);
 				}
 			});
+			/* Fake form for search function */
+			$(".search-project-link").click(function (e) {
+				e.preventDefault();
+				$("#search-form").submit();
+			});
+			/* Parse value from search query */
 		});
 
 		/* Separate function to get the last page of total results */

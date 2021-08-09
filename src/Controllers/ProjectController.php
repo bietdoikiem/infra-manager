@@ -33,6 +33,27 @@ class ProjectController {
   }
 
   /**
+   * BigQuery Index page
+   * 
+   * @param int $size Total rows display in a single page
+   * @param int $page Current page number
+   * @return void
+   */
+  public function bigquery_index(int $size = 10, int $page = 1) {
+    // Read all projects
+    $result = $this->projectService->read_projects_bigquery($size, $page);
+    $project_list = $result[0];
+    $count_project_list = count($project_list);
+    $total_result = $result[1];
+    // Render page
+    View::renderTemplate('Project/bigquery_index.html', [
+      'project_list' => $project_list,
+      'total_result' => $total_result,
+      'count_project_list' => $count_project_list
+    ]);
+  }
+
+  /**
    * Index page
    */
   public function search(string $keyword = "", string $country = "", int $size = 10, int $page = 1) {

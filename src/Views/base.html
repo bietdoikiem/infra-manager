@@ -21,6 +21,8 @@
 			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
 		/>
 
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.0/chart.js"></script>
+
 		<link rel="stylesheet" href="{{ siteUrl }}../base.css" />
 		<link
 			rel="icon"
@@ -61,6 +63,9 @@
 						#}
 					</li>
 					<li>
+						<a href="/bigquery"> <i class="fab fa-google"></i> BigQuery </a>
+					</li>
+					<li>
 						<a href="/stats">
 							<i class="fas fa-chart-bar"></i>
 							Statistics
@@ -96,7 +101,8 @@
 							aria-current="page"
 							style="margin-left: -12px"
 						>
-							> {% block breadcrumb %} {% endblock %}
+							<span style="color: #999">></span> {% block breadcrumb %} {%
+							endblock %}
 						</li>
 					</ol>
 				</nav>

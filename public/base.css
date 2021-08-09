@@ -319,3 +319,8 @@ input::-webkit-inner-spin-button {
 input[type="number"] {
 	-moz-appearance: textfield;
 }
+
+.breadcrumb-link {
+	text-decoration: none;
+	color: #999;
+}

@@ -136,7 +136,13 @@ class ProjectService {
       array_push($project_list, $project_obj);
     }
     /* Calculate total query results */
-    $total_result = $this->count_total_subquery_bigquery($query_statement);
+    $count_query_statement = <<<EOT
+    SELECT * 
+    FROM `$table_id`
+    {$where_query}
+    ORDER BY id ASC
+    EOT;
+    $total_result = $this->count_total_subquery_bigquery($count_query_statement);
 
     /* Aggregate return results for bigquery function */
     $return_result = array();
