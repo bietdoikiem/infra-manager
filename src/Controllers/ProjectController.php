@@ -16,7 +16,7 @@ class ProjectController {
   }
 
   /**
-   * Index page
+   * Index page of Projects
    * 
    * @param int $size Size of the page
    * @param int $page Page no.
@@ -37,7 +37,7 @@ class ProjectController {
   }
 
   /**
-   * BigQuery Index page
+   * Index page of BigQuery
    * 
    * @param int $size Total rows display in a single page
    * @param int $page Current page number
