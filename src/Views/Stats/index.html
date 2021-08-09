@@ -2,40 +2,46 @@
 header_title %} Statistics {% endblock %} {% block breadcrumb %} Statistics {%
 endblock %} {% block body %}
 
-<div id="inner-project-content">
+<div id="inner-stats-content">
 	<!-- Table -->
 	<!-- Button trigger modal -->
 	<div class="table-actions mb-3" style="display: flex">
-		<h3 style="margin-right: auto">List of Projects</h3>
-		<div class="right-menu-wrapper" style="margin-left: auto">
-			<button
-				type="button"
-				class="btn btn-primary"
-				data-toggle="modal"
-				data-target="#addModal"
-				style="display: inline-block"
-			>
-				<i class="fas fa-plus"></i>
-				Add
-			</button>
-		</div>
+		<h3 style="margin-right: auto">
+			Github Stats <i class="fab fa-github"></i>
+		</h3>
+		<div class="right-menu-wrapper" style="margin-left: auto"></div>
 	</div>
 	<div class="chart-wrapper">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="big-number"><span class="count">3000000</span></div>
+				<div id="big-div" class="big-number">
+					<span class="count">{{ total_commit }}</span>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="big-number">
+					<span style="font-size: 32px">Total Commits since 2021!</span>
+				</div>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-md-6">
-				<div class="chart-content">
-					<canvas id="bar-chart" height="100" width="100"></canvas>
+				<div
+					class="chart-content"
+					style="position: relative; height: 70vh; width: 50vw"
+				>
+					<canvas id="bar-chart" height="400" width="400"></canvas>
 				</div>
 			</div>
 			<div class="col-md-6">
-				<div class="chart-content">
-					<canvas id="doughnut-chart" height="100" width="100"></canvas>
+				<div
+					class="chart-content"
+					style="position: relative; height: 70vh; width: 50vw"
+				>
+					<canvas id="doughnut-chart" height="400" width="400"></canvas>
 				</div>
 			</div>
 		</div>
@@ -48,6 +54,7 @@ endblock %} {% block body %}
 
 	<!-- jQuery scripts -->
 	<script>
+		/* Counting stars!!! hehe */
 		$(document).ready(function (e) {
 			$(".count").each(function () {
 				$(this)
@@ -57,7 +64,7 @@ endblock %} {% block body %}
 							Counter: $(this).text(),
 						},
 						{
-							duration: 4000,
+							duration: 1500,
 							easing: "swing",
 							step: function (now) {
 								$(this).text(Math.ceil(now));
@@ -69,51 +76,91 @@ endblock %} {% block body %}
 	</script>
 	<!-- Chart script -->
 	<script>
+		/* Parse variables from Twig */
+		var top_languages = {{ top_languages | json_encode() | raw }}
+		var top_licenses = {{ top_licenses | json_encode() | raw }}
+		var other_license_usage = {{ other_license_usage }};
+		// Parse array
+		other_license_usage = parseInt(other_license_usage, 10);
+		console.log(top_licenses);
+		  var other_license_obj = {
+		      license: 'Others',
+		      license_usage: other_license_usage
+		    }
+		  /* Prepare data for Horizontal Bar chart */
+		  var top_languages_label = top_languages.map(l => l['language_name']);
+		  var top_languages_count = top_languages.map(l => l['total_result']);
+		  var top_licenses_label = top_licenses.map(l => l['license']);
+		  top_licenses_label.push(other_license_obj['license']);
+		  var top_licenses_count = top_licenses.map(l => l['license_usage']);
+		  top_licenses_count.push(other_license_obj['license_usage']);
 		/* Line Chart */
-		const labels = ["January", "February", "March", "April", "May", "June"];
-		const data = {
-			labels: labels,
-			datasets: [
-				{
-					label: "My First dataset",
-					backgroundColor: "rgb(255, 99, 132)",
-					borderColor: "rgb(255, 99, 132)",
-					data: [0, 10, 5, 2, 20, 30, 45],
-				},
-			],
-		};
-		const config = {
-			type: "line",
-			data,
-			options: {},
-		};
-		var myChart = new Chart(document.getElementById("bar-chart"), config);
-		/* Doughnut Chart */
+		new Chart(document.getElementById("bar-chart"), {
+		      type: 'bar',
+		      data: {
+		        labels: top_languages_label,
+		        datasets: [
+		          {
+		            label: "Language Usage",
+		            backgroundColor: ["#f1e05a", "#563d7c","#e44b23","#89e051","#3572A5",
+		              "#701516", "#b07219", "#4F5D95", "#555555", "#f34b7d"],
+		            data: top_languages_count
+		          }
+		        ]
+		      },
+		      options: {
+		          indexAxis: 'y',
+		          responsive: true,
+		            maintainAspectRatio: false,
+		          plugins: {
+		            legend: {
+		              display: false
+		            },
+		            title: {
+		              display: true,
+		              text: 'Top 10 Languages'
+		            },
+		          }
+		      },
+		});
+		// Doughnut Chart
 		new Chart(document.getElementById("doughnut-chart"), {
 			type: "doughnut",
 			data: {
-				labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+				labels: top_licenses_label,
 				datasets: [
 					{
-						label: "Population (millions)",
+						label: "Licenses Usage",
 						backgroundColor: [
-							"#3e95cd",
-							"#8e5ea2",
-							"#3cba9f",
-							"#e8c3b9",
-							"#c45850",
+		          "#701516",
+							"#f05b2d",
+							"#f34b7d",
+							"#96cc39",
+							"#f1e05a",
+		          "#a9a9a9",
 						],
-						data: [2478, 5267, 734, 784, 433],
+						data: top_licenses_count,
 					},
 				],
 			},
 			options: {
-				title: {
-					display: true,
-					text: "Predicted world population (millions) in 2050",
-				},
-			},
+		      responsive: true,
+		        maintainAspectRatio: false,
+		      plugins: {
+		        legend: {
+		          display: true
+		        },
+		        title: {
+		          display: true,
+		          text: 'Top Software License Usage'
+		        },
+		      }
+		  },
 		});
+		  /* Party Confetti hehe */
+		  setTimeout(function(){ party.confetti(document.getElementById("big-div")); }, 100);
+		  setTimeout(function(){ party.sparkles(document.getElementById("big-div")); }, 500);
+		  setTimeout(function(){ party.confetti(document.getElementById("big-div")); }, 500);
 	</script>
 </div>
 

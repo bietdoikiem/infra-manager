@@ -66,6 +66,21 @@ span {
 	display: block;
 }
 
+#inner-stats-content {
+	padding: 15px 10px;
+	background: #fff;
+	border: none;
+	border-radius: 0;
+	margin-bottom: 40px;
+	box-shadow: 1px 1px 3px rgb(0 0 0 / 10%);
+	background-color: #f8f9fa !important;
+	min-height: 100vh !important;
+	height: auto;
+	overflow: hidden;
+	margin-bottom: 10px;
+	display: block;
+}
+
 /* ---------------------------------------------------
     SIDEBAR STYLE
 ----------------------------------------------------- */

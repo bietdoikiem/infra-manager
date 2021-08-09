@@ -5,6 +5,7 @@ namespace App\Models\Services;
 use Google\Cloud\BigQuery\BigQueryClient;
 use App\Utils\BucketConfig;
 
+
 class StatsService {
   public $bigQuery;
 
