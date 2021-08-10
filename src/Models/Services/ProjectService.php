@@ -185,7 +185,7 @@ class ProjectService {
   /**
    * Count total of rows from a Sub-query in BigQuery
    * 
-   * @param string $table_id Id of table on BigQuery dataset
+   * @param string $subquery Subquery to count from
    * @return int Total rows of the dataset OR zero row if can't find one
    */
   public function count_total_subquery_bigquery(string $subquery): int {
